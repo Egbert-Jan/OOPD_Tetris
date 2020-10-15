@@ -17,7 +17,7 @@ public class Tetris extends GameEngine {
 
     Shape currentShape = new Hook(5, 0);
 
-    private DecendTimer decendTimer;
+    private DecendTimer decendTimer = new DecendTimer(this);
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
@@ -37,8 +37,6 @@ public class Tetris extends GameEngine {
         size(worldWidth, worldHeight);
 
         initializeTileMap();
-
-        decendTimer = new DecendTimer(this);
     }
 
     @Override
@@ -98,30 +96,5 @@ public class Tetris extends GameEngine {
         }
 
         super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
-    }
-}
-
-
-
-class DecendTimer implements IAlarmListener {
-    private Tetris world;
-
-    public DecendTimer(Tetris world) {
-        this.world = world;
-        startAlarm();
-    }
-
-    private void startAlarm() {
-        Alarm alarm = new Alarm("Fall Timer", 2);
-        alarm.addTarget(this);
-        alarm.start();
-    }
-
-    @Override
-    public void triggerAlarm(String alarmName) {
-        System.out.println("Timer");
-        world.currentShape.goDown();
-        world.initializeTileMap();
-        startAlarm();
     }
 }
