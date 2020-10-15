@@ -1,6 +1,5 @@
 import nl.han.ica.oopg.alarm.Alarm;
 import nl.han.ica.oopg.alarm.IAlarmListener;
-import shapes.Point;
 
 public class DecendTimer implements IAlarmListener {
     private Tetris world;
@@ -19,9 +18,10 @@ public class DecendTimer implements IAlarmListener {
     @Override
     public void triggerAlarm(String alarmName) {
         System.out.println("Timer");
-        world.clearMap();
-        world.currentShape.goDown();
-        world.initializeTileMap();
+        if(world.tryClearCurrentShape()) {
+            world.currentShape.goDown();
+        }
+        world.drawMap();
         startAlarm();
     }
 }

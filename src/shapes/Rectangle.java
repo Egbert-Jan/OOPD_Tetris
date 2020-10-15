@@ -1,12 +1,12 @@
 package shapes;
 
 public class Rectangle extends Shape {
-    public Rectangle(int x, int y) {
-        super(x, y);
+    public Rectangle() {
+        super();
 
-        points[3] = new Point(x+1, y);
-        points[0] = new Point(x, y);
-        points[1] = new Point(x-1, y);
-        points[2] = new Point(x-2, y);
+        points[3] = new Point(startX+1, startY);
+        points[0] = new Point(startX, startY);
+        points[1] = new Point(startX-1, startY);
+        points[2] = new Point(startX-2, startY);
     }
 }

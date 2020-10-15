@@ -6,7 +6,7 @@ import nl.han.ica.oopg.tile.TileType;
 import nl.han.ica.oopg.view.View;
 import shapes.Hook;
 import shapes.Point;
-import shapes.Shape;
+import shapes.*;
 
 import java.awt.event.KeyEvent;
 
@@ -15,15 +15,16 @@ public class Tetris extends GameEngine {
     private final int TILE_SIZE = 35;
 
     private int tilesMap[][] = createMap();
-    Shape currentShape = new Hook(5, 0);
+    Shape currentShape = new Hook();
 
     private DecendTimer decendTimer = new DecendTimer(this);
+
+//    Shape[] shapes = { new Rectangle(), new Hook() };
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
         main.runSketch();
     }
-
 
     @Override
     public void setupGame() {
@@ -36,40 +37,35 @@ public class Tetris extends GameEngine {
 
         size(worldWidth, worldHeight);
 
-        initializeTileMap();
+        drawMap();
     }
 
     @Override
     public void update() {
-        System.out.println("cool");
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        clearMap();
+        if(!tryClearCurrentShape()) { return; };
 
-        if(e.getKeyCode() == LEFT) {
+        if(e.getKeyCode() == LEFT && currentShape.getMinX() > 0) {
             currentShape.goLeft();
-        } else if(e.getKeyCode() == RIGHT) {
+        } else if(e.getKeyCode() == RIGHT && currentShape.getMaxX() < 9) {
             currentShape.goRight();
         } else if(e.getKeyCode() == DOWN) {
             currentShape.goDown();
         }
 
-        initializeTileMap();
+        drawMap();
     }
 
-    TileType[] tileTypes = new TileType[1];
+    TileType[] tileTypes = createTiles();
 
-    public void initializeTileMap() {
-        Sprite sprite = new Sprite(Tetris.MEDIA_URL.concat("tile.png"));
-        TileType<Tile> floorTileType = new TileType<>(Tile.class, sprite);
-        tileTypes[0] = floorTileType;
-
+    public void drawMap() {
+        //Draw shapes
         for(int y = 0; y < tilesMap.length; y++) {
             for(int x = 0; x < tilesMap.length; x++) {
-
-                if(currentShape.isOnPosition(x, y)) {
+                if(currentShape.shouldDraw(x, y)) {
                     tilesMap[y][x] = currentShape.type;
                 }
             }
@@ -78,12 +74,30 @@ public class Tetris extends GameEngine {
         super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
     }
 
-    void clearMap() {
+    private TileType[] createTiles() {
+        Sprite sprite = new Sprite(Tetris.MEDIA_URL.concat("tile.png"));
+        TileType<Tile> floorTileType = new TileType<>(Tile.class, sprite);
+
+        TileType[] tileTypes = new TileType[] {
+            floorTileType,
+        };
+
+        return tileTypes;
+    }
+
+    boolean tryClearCurrentShape() {
+
+        if(currentShape.getMaxY() == 19) {
+            currentShape = new Rectangle();
+            return false;
+        }
+
         for(Point point : currentShape.points) {
             if(point.y < 0) { continue; }
-            System.out.println(point.y);
             tilesMap[point.y][point.x] = -1;
         }
+
+        return true;
     }
 
     //Creates a map 20 by 10
@@ -97,7 +111,14 @@ public class Tetris extends GameEngine {
             }
             map[y] = row;
         }
-
         return map;
     }
 }
+
+//
+//     if(currentShape.getMaxY() == 19) {
+//             System.out.println("si");
+//             currentShape = new Rectangle();
+//             super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
+//             return;
+//             }

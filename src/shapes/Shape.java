@@ -1,19 +1,62 @@
 package shapes;
 
 public class Shape {
-    public int x, y = 0;
 
+    static int startX = 5;
+    static int startY = 1;
     public Point[] points = new Point[4];
 
     //Green Tile
     public int type = 0;
 
-    public Shape(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Shape() { }
+
+    public int getMinX() {
+        int minX = points[0].x;
+
+        for(Point point : points) {
+            if(point.x < minX) {
+                minX = point.x;
+            }
+        }
+        return minX;
     }
 
-    public boolean isOnPosition(int x, int y) {
+    public int getMaxX() {
+        int maxX = points[0].x;
+
+        for(Point point : points) {
+            if(point.x > maxX) {
+                maxX = point.x;
+            }
+        }
+        return maxX;
+    }
+
+    public int getMinY() {
+        int minY = points[0].y;
+
+        for(Point point : points) {
+            if(point.y < minY) {
+                minY = point.y;
+            }
+        }
+        return minY;
+    }
+
+    public int getMaxY() {
+        int maxY = points[0].y;
+
+        for(Point point : points) {
+            if(point.y > maxY) {
+                maxY = point.y;
+            }
+        }
+        return maxY;
+    }
+
+
+    public boolean shouldDraw(int x, int y) {
         for (Point point: points) {
             if(point.x == x && point.y == y) {
                 return true;
