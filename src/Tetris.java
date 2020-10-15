@@ -1,23 +1,127 @@
+import nl.han.ica.oopg.alarm.Alarm;
+import nl.han.ica.oopg.alarm.IAlarmListener;
 import nl.han.ica.oopg.engine.GameEngine;
+import nl.han.ica.oopg.objects.Sprite;
+import nl.han.ica.oopg.tile.Tile;
+import nl.han.ica.oopg.tile.TileMap;
+import nl.han.ica.oopg.tile.TileType;
+import nl.han.ica.oopg.view.View;
+import shapes.Hook;
+import shapes.Shape;
+
+import java.awt.event.KeyEvent;
 
 public class Tetris extends GameEngine {
+    private static String MEDIA_URL = "src/media/";
+    private final int TILE_SIZE = 35;
+
+    Shape currentShape = new Hook(5, 0);
+
+    private DecendTimer decendTimer;
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
         main.runSketch();
-        System.out.println("ja");
     }
 
 
     @Override
     public void setupGame() {
+        int worldWidth = TILE_SIZE * 10;
+        int worldHeight = TILE_SIZE * 20;
 
+        View view = new View(worldWidth, worldHeight);
+        view.setBackground(100, 100, 100);
+        setView(view);
+
+        size(worldWidth, worldHeight);
+
+        initializeTileMap();
+
+        decendTimer = new DecendTimer(this);
     }
 
     @Override
     public void update() {
 
     }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == LEFT) {
+            currentShape.goLeft();
+        } else if(e.getKeyCode() == RIGHT) {
+            currentShape.goRight();
+        } else if(e.getKeyCode() == DOWN) {
+            currentShape.goDown();
+        }
+
+        initializeTileMap();
+    }
+
+    TileType[] tileTypes = new TileType[1];
+
+    public void initializeTileMap() {
+        Sprite sprite = new Sprite(Tetris.MEDIA_URL.concat("tile.png"));
+        TileType<Tile> floorTileType = new TileType<>(Tile.class, sprite);
+        tileTypes[0] = floorTileType;
+        int tilesMap[][] = {
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+        };
+
+        for(int y = 0; y < tilesMap.length; y++) {
+            for(int x = 0; x < tilesMap.length; x++) {
+
+                if(currentShape.isOnPosition(x, y)) {
+                    tilesMap[y][x] = currentShape.type;
+                }
+            }
+        }
+
+        super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
+    }
 }
 
 
+
+class DecendTimer implements IAlarmListener {
+    private Tetris world;
+
+    public DecendTimer(Tetris world) {
+        this.world = world;
+        startAlarm();
+    }
+
+    private void startAlarm() {
+        Alarm alarm = new Alarm("Fall Timer", 2);
+        alarm.addTarget(this);
+        alarm.start();
+    }
+
+    @Override
+    public void triggerAlarm(String alarmName) {
+        System.out.println("Timer");
+        world.currentShape.goDown();
+        world.initializeTileMap();
+        startAlarm();
+    }
+}
