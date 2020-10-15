@@ -1,24 +1,9 @@
 package shapes;
 
-class Point {
-    int x, y = 0;
-
-    Point(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-
-    public boolean equals(Point p) {
-        return p.x == this.x && p.y == this.y;
-    }
-}
-
 public class Shape {
-    private int x = 0;
-    private int y = 0;
+    public int x, y = 0;
 
-    Point[] points = new Point[4];
+    public Point[] points = new Point[4];
 
     //Green Tile
     public int type = 0;
