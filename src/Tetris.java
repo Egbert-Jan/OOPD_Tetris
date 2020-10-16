@@ -75,11 +75,15 @@ public class Tetris extends GameEngine {
     }
 
     private TileType[] createTiles() {
-        Sprite sprite = new Sprite(Tetris.MEDIA_URL.concat("tile.png"));
-        TileType<Tile> floorTileType = new TileType<>(Tile.class, sprite);
+        Sprite lightBlueSprite = new Sprite(Tetris.MEDIA_URL.concat("lightBlueTile.png"));
+        TileType<Tile> lightBlueTileType = new TileType<>(Tile.class, lightBlueSprite);
+
+        Sprite blueSprite = new Sprite(Tetris.MEDIA_URL.concat("blueTile.png"));
+        TileType<Tile> blueTileType = new TileType<>(Tile.class, blueSprite);
 
         TileType[] tileTypes = new TileType[] {
-            floorTileType,
+                lightBlueTileType,
+                blueTileType
         };
 
         return tileTypes;
@@ -88,6 +92,7 @@ public class Tetris extends GameEngine {
     boolean tryClearCurrentShape() {
 
         if(currentShape.getMaxY() == 19) {
+            System.out.println("jjaaaaa");
             currentShape = new Rectangle();
             return false;
         }
@@ -114,11 +119,3 @@ public class Tetris extends GameEngine {
         return map;
     }
 }
-
-//
-//     if(currentShape.getMaxY() == 19) {
-//             System.out.println("si");
-//             currentShape = new Rectangle();
-//             super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
-//             return;
-//             }

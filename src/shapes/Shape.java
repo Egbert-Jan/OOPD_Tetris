@@ -1,12 +1,10 @@
 package shapes;
 
-public class Shape {
-
+abstract public class Shape {
     static int startX = 5;
     static int startY = 1;
     public Point[] points = new Point[4];
 
-    //Green Tile
     public int type = 0;
 
     public Shape() { }
@@ -81,5 +79,12 @@ public class Shape {
         for(Point point: points) {
             point.x++;
         }
+    }
+
+    public boolean canGoDown() {
+
+
+
+        return false;
     }
 }
