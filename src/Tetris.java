@@ -91,7 +91,7 @@ public class Tetris extends GameEngine {
 
     boolean tryClearCurrentShape() {
 
-        if(currentShape.getMaxY() == 19) {
+        if(!currentShape.canGoDown(tilesMap)) {
             System.out.println("jjaaaaa");
             currentShape = new Rectangle();
             return false;

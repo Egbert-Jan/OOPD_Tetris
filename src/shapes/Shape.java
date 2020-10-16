@@ -1,6 +1,8 @@
 package shapes;
 
-abstract public class Shape {
+import java.util.HashMap;
+
+public class Shape {
     static int startX = 5;
     static int startY = 1;
     public Point[] points = new Point[4];
@@ -8,6 +10,33 @@ abstract public class Shape {
     public int type = 0;
 
     public Shape() { }
+
+    private Point[] getLowestPoints() {
+        HashMap<Integer, Point> hashMap = new HashMap<>();
+
+        for(Point point : points) {
+            hashMap.putIfAbsent(point.x, point);
+
+            if(hashMap.get(point.x).y < point.y)
+            {
+                hashMap.put(point.x, point);
+            }
+        }
+
+        return hashMap.values().toArray(new Point[0]);
+    }
+
+    public boolean canGoDown(int[][] map) {
+        Point[] lowestPoints = getLowestPoints();
+
+        for(Point point: lowestPoints) {
+            if(point.y == 19 || map[point.y+1][point.x] != -1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     public int getMinX() {
         int minX = points[0].x;
@@ -81,10 +110,5 @@ abstract public class Shape {
         }
     }
 
-    public boolean canGoDown() {
 
-
-
-        return false;
-    }
 }
