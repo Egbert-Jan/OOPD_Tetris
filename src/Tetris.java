@@ -4,9 +4,9 @@ import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
 import nl.han.ica.oopg.view.View;
-import shapes.Hook;
-import shapes.Point;
-import shapes.*;
+import tetrominos.Hook;
+import tetrominos.Point;
+import tetrominos.*;
 
 import java.awt.event.KeyEvent;
 
@@ -15,11 +15,11 @@ public class Tetris extends GameEngine {
     private final int TILE_SIZE = 35;
 
     private int tilesMap[][] = createMap();
-    Shape currentShape = new Hook();
+    Tetromino currentTetromino = new Hook();
 
     private DecendTimer decendTimer = new DecendTimer(this);
 
-//    Shape[] shapes = { new Rectangle(), new Hook() };
+//    Tetromino[] tetrominos = { new Straight(), new Hook() };
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
@@ -48,12 +48,12 @@ public class Tetris extends GameEngine {
     public void keyPressed(KeyEvent e) {
         if(!tryClearCurrentShape()) { return; };
 
-        if(e.getKeyCode() == LEFT && currentShape.getMinX() > 0) {
-            currentShape.goLeft();
-        } else if(e.getKeyCode() == RIGHT && currentShape.getMaxX() < 9) {
-            currentShape.goRight();
+        if(e.getKeyCode() == LEFT && currentTetromino.getMinX() > 0) {
+            currentTetromino.goLeft();
+        } else if(e.getKeyCode() == RIGHT && currentTetromino.getMaxX() < 9) {
+            currentTetromino.goRight();
         } else if(e.getKeyCode() == DOWN) {
-            currentShape.goDown();
+            currentTetromino.goDown();
         }
 
         drawMap();
@@ -62,11 +62,11 @@ public class Tetris extends GameEngine {
     TileType[] tileTypes = createTiles();
 
     public void drawMap() {
-        //Draw shapes
+        //Draw tetrominos
         for(int y = 0; y < tilesMap.length; y++) {
             for(int x = 0; x < tilesMap.length; x++) {
-                if(currentShape.shouldDraw(x, y)) {
-                    tilesMap[y][x] = currentShape.type;
+                if(currentTetromino.shouldDraw(x, y)) {
+                    tilesMap[y][x] = currentTetromino.type;
                 }
             }
         }
@@ -91,13 +91,13 @@ public class Tetris extends GameEngine {
 
     boolean tryClearCurrentShape() {
 
-        if(!currentShape.canGoDown(tilesMap)) {
+        if(!currentTetromino.canGoDown(tilesMap)) {
             System.out.println("jjaaaaa");
-            currentShape = new Rectangle();
+            currentTetromino = new Straight();
             return false;
         }
 
-        for(Point point : currentShape.points) {
+        for(Point point : currentTetromino.points) {
             if(point.y < 0) { continue; }
             tilesMap[point.y][point.x] = -1;
         }

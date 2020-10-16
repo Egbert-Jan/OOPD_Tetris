@@ -1,15 +1,16 @@
-package shapes;
+package tetrominos;
 
 import java.util.HashMap;
 
-public class Shape {
+public class Tetromino {
     static int startX = 5;
     static int startY = 1;
     public Point[] points = new Point[4];
 
     public int type = 0;
 
-    public Shape() { }
+
+    public Tetromino() { }
 
     private Point[] getLowestPoints() {
         HashMap<Integer, Point> hashMap = new HashMap<>();

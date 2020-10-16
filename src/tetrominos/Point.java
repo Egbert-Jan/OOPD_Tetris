@@ -1,4 +1,6 @@
-package shapes;
+package tetrominos;
+
+
 
 public class Point {
     public int x, y = 0;

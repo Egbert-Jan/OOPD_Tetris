@@ -1,7 +1,7 @@
-package shapes;
+package tetrominos;
 
-public class Rectangle extends Shape {
-    public Rectangle() {
+public class Straight extends Tetromino {
+    public Straight() {
         super();
 
         type = 0;

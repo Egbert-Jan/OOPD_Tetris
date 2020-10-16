@@ -19,7 +19,7 @@ public class DecendTimer implements IAlarmListener {
     public void triggerAlarm(String alarmName) {
         System.out.println("Timer");
         if(world.tryClearCurrentShape()) {
-            world.currentShape.goDown();
+            world.currentTetromino.goDown();
         }
         world.drawMap();
         startAlarm();

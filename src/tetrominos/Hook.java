@@ -1,6 +1,6 @@
-package shapes;
+package tetrominos;
 
-public class Hook extends Shape {
+public class Hook extends Tetromino {
     public Hook() {
         super();
 
