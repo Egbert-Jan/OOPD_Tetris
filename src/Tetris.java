@@ -4,21 +4,18 @@ import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
 import nl.han.ica.oopg.view.View;
-import tetrominos.Point;
 import tetrominos.*;
 
 import java.awt.event.KeyEvent;
-import java.util.Random;
 
 public class Tetris extends GameEngine {
     private static String MEDIA_URL = "src/media/";
+
     private final int TILE_SIZE = 35;
 
     private int tilesMap[][] = createMap();
     private TileType[] tileTypes = createTiles();
-    private Class[] tetrominos = { Straight.class, LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class };
-    Tetromino currentTetromino = generateRandomTetromino();
-
+    private Tetromino currentTetromino = Tetromino.generateRandomTetromino();
     private DecendTimer decendTimer = new DecendTimer(this);
 
     public static void main(String[] args) {
@@ -46,20 +43,25 @@ public class Tetris extends GameEngine {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(!tryClearCurrentShape()) { return; };
 
-        if(e.getKeyCode() == LEFT && currentTetromino.getMinX() > 0) {
-            currentTetromino.goLeft();
-        } else if(e.getKeyCode() == RIGHT && currentTetromino.getMaxX() < 9) {
-            currentTetromino.goRight();
+        if(e.getKeyCode() == LEFT) {
+            currentTetromino.goLeft(tilesMap);
+        } else if(e.getKeyCode() == RIGHT) {
+            currentTetromino.goRight(tilesMap);
         } else if(e.getKeyCode() == DOWN) {
-            currentTetromino.goDown();
+            handleGoDown();
         }
 
         drawMap();
     }
 
-    public void drawMap() {
+    void handleGoDown() {
+        if(!currentTetromino.goDown(tilesMap)) {
+            currentTetromino = Tetromino.generateRandomTetromino();
+        }
+    }
+
+    void drawMap() {
         //Draw tetrominos
         for(int y = 0; y < tilesMap.length; y++) {
             for(int x = 0; x < tilesMap.length; x++) {
@@ -82,7 +84,7 @@ public class Tetris extends GameEngine {
         Sprite redSprite = new Sprite(Tetris.MEDIA_URL.concat("redTile.png"));
 
 
-        TileType[] tileTypes = new TileType[] {
+        return new TileType[] {
                 new TileType<>(Tile.class, lightBlueSprite),
                 new TileType<>(Tile.class, blueSprite),
                 new TileType<>(Tile.class, orangeSprite),
@@ -91,24 +93,6 @@ public class Tetris extends GameEngine {
                 new TileType<>(Tile.class, purpleSprite),
                 new TileType<>(Tile.class, redSprite),
         };
-
-        return tileTypes;
-    }
-
-    boolean tryClearCurrentShape() {
-
-        if(!currentTetromino.canGoDown(tilesMap)) {
-            System.out.println("jjaaaaa");
-            currentTetromino = generateRandomTetromino();
-            return false;
-        }
-
-        for(Point point : currentTetromino.points) {
-            if(point.y < 0) { continue; }
-            tilesMap[point.y][point.x] = -1;
-        }
-
-        return true;
     }
 
     //Creates a map 20 by 10
@@ -123,14 +107,5 @@ public class Tetris extends GameEngine {
             map[y] = row;
         }
         return map;
-    }
-
-    private Tetromino generateRandomTetromino() {
-        try {
-            int randomNr = new Random().nextInt(tetrominos.length);
-            return (Tetromino) tetrominos[randomNr].newInstance();
-        } catch (IllegalAccessException | InstantiationException a) {
-            return null;
-        }
     }
 }
