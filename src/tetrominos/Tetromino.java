@@ -3,7 +3,7 @@ package tetrominos;
 import java.util.HashMap;
 
 public class Tetromino {
-    static int startX = 5;
+    static int startX = 4;
     static int startY = 1;
     public Point[] points = new Point[4];
 

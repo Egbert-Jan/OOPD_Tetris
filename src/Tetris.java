@@ -4,22 +4,22 @@ import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
 import nl.han.ica.oopg.view.View;
-import tetrominos.Hook;
 import tetrominos.Point;
 import tetrominos.*;
 
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 public class Tetris extends GameEngine {
     private static String MEDIA_URL = "src/media/";
     private final int TILE_SIZE = 35;
 
     private int tilesMap[][] = createMap();
-    Tetromino currentTetromino = new Hook();
+    private TileType[] tileTypes = createTiles();
+    private Class[] tetrominos = { Straight.class, LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class };
+    Tetromino currentTetromino = generateRandomTetromino();
 
     private DecendTimer decendTimer = new DecendTimer(this);
-
-//    Tetromino[] tetrominos = { new Straight(), new Hook() };
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
@@ -59,8 +59,6 @@ public class Tetris extends GameEngine {
         drawMap();
     }
 
-    TileType[] tileTypes = createTiles();
-
     public void drawMap() {
         //Draw tetrominos
         for(int y = 0; y < tilesMap.length; y++) {
@@ -76,14 +74,22 @@ public class Tetris extends GameEngine {
 
     private TileType[] createTiles() {
         Sprite lightBlueSprite = new Sprite(Tetris.MEDIA_URL.concat("lightBlueTile.png"));
-        TileType<Tile> lightBlueTileType = new TileType<>(Tile.class, lightBlueSprite);
-
         Sprite blueSprite = new Sprite(Tetris.MEDIA_URL.concat("blueTile.png"));
-        TileType<Tile> blueTileType = new TileType<>(Tile.class, blueSprite);
+        Sprite orangeSprite = new Sprite(Tetris.MEDIA_URL.concat("orangeTile.png"));
+        Sprite yellowSprite = new Sprite(Tetris.MEDIA_URL.concat("yellowTile.png"));
+        Sprite greenSprite = new Sprite(Tetris.MEDIA_URL.concat("greenTile.png"));
+        Sprite purpleSprite = new Sprite(Tetris.MEDIA_URL.concat("purpleTile.png"));
+        Sprite redSprite = new Sprite(Tetris.MEDIA_URL.concat("redTile.png"));
+
 
         TileType[] tileTypes = new TileType[] {
-                lightBlueTileType,
-                blueTileType
+                new TileType<>(Tile.class, lightBlueSprite),
+                new TileType<>(Tile.class, blueSprite),
+                new TileType<>(Tile.class, orangeSprite),
+                new TileType<>(Tile.class, yellowSprite),
+                new TileType<>(Tile.class, greenSprite),
+                new TileType<>(Tile.class, purpleSprite),
+                new TileType<>(Tile.class, redSprite),
         };
 
         return tileTypes;
@@ -93,7 +99,7 @@ public class Tetris extends GameEngine {
 
         if(!currentTetromino.canGoDown(tilesMap)) {
             System.out.println("jjaaaaa");
-            currentTetromino = new Straight();
+            currentTetromino = generateRandomTetromino();
             return false;
         }
 
@@ -117,5 +123,14 @@ public class Tetris extends GameEngine {
             map[y] = row;
         }
         return map;
+    }
+
+    private Tetromino generateRandomTetromino() {
+        try {
+            int randomNr = new Random().nextInt(tetrominos.length);
+            return (Tetromino) tetrominos[randomNr].newInstance();
+        } catch (IllegalAccessException | InstantiationException a) {
+            return null;
+        }
     }
 }

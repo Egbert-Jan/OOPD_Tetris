@@ -1,7 +1,7 @@
 package tetrominos;
 
-public class Hook extends Tetromino {
-    public Hook() {
+public class LeftHook extends Tetromino {
+    public LeftHook() {
         super();
 
         type = 1;
