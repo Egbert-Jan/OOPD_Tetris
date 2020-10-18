@@ -6,14 +6,33 @@ public class LeftSkew extends Tetromino {
 
         type = 4;
 
-        drawPoints[3] = new Point(startX-1, startY);
-        drawPoints[0] = new Point(startX, startY);
-        drawPoints[1] = new Point(startX, startY-1);
-        drawPoints[2] = new Point(startX+1, startY-1);
+
+        int sX = startX;
+        int sY = startY;
+
+        points[0] = new Point(sX, sY);
+        points[1] = new Point(sX+1, sY);//hier
+        points[2] = new Point(sX+1, sY-1);
+        points[3] = new Point(sX+2, sY-1);
     }
 
     @Override
     public void rotate(int[][] map, int rotationNumber) {
+        //Turn point
+        Point tP = points[1];
 
+        int x = tP.x;
+        int y = tP.y;
+
+        if(rotationNumber == 0 || rotationNumber == 2) {
+            points[0] = new Point(x-1, y);
+            points[2] = new Point(x, y-1);
+            points[3] = new Point(x+1, y-1);
+        } else {
+            points[0] = new Point(x, y-1);
+            points[2] = new Point(x+1, y);
+            points[3] = new Point(x+1, y+1);
+        }
     }
+
 }

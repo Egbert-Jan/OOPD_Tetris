@@ -6,18 +6,15 @@ import java.util.Random;
 
 
 public abstract class Tetromino {
-    public static final Class[] TETROMINOS = { Pyramid.class,
-//            LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class
+    public static final Class[] TETROMINOS = {
+           Straight.class, LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class
     };
     static int startX = 3;
     static int startY = 1;
 
-
     public static Tetromino currentTetromino = generateRandomTetromino();
 
-    Point[] drawPoints = new Point[4];
-
-    Point[][] allRotationPoints = new Point[4][4];
+    Point[] points = new Point[4];
 
     public int type = 0;
 
@@ -42,7 +39,7 @@ public abstract class Tetromino {
 
             //Rotate back
             rotate(map, rotationNumber);
-            
+
             for(int row = 0; row < map.length; row++) {
                 map[0] = tempMap[0];
             }
@@ -63,7 +60,7 @@ public abstract class Tetromino {
     private Point[] getLowestPoints() {
         HashMap<Integer, Point> hashMap = new HashMap<>();
 
-        for(Point point : drawPoints) {
+        for(Point point : points) {
             hashMap.putIfAbsent(point.x, point);
 
             if(hashMap.get(point.x).y < point.y)
@@ -78,7 +75,7 @@ public abstract class Tetromino {
     private Point[] getSidePoints(boolean rightSide) {
         HashMap<Integer, Point> hashMap = new HashMap<>();
 
-        for(Point point : drawPoints) {
+        for(Point point : points) {
             hashMap.putIfAbsent(point.y, point);
 
             if(rightSide) {
@@ -112,7 +109,7 @@ public abstract class Tetromino {
     }
 
     public boolean shouldDraw(int x, int y) {
-        for (Point point: drawPoints) {
+        for (Point point: points) {
             if(point.x == x && point.y == y) {
                 return true;
             }
@@ -128,7 +125,7 @@ public abstract class Tetromino {
 
         clearTetromino(map);
 
-        for(Point point: drawPoints) {
+        for(Point point: points) {
             point.y++;
         }
 
@@ -136,7 +133,7 @@ public abstract class Tetromino {
     }
 
     protected void clearTetromino(int[][] map) {
-        for(Point point : drawPoints) {
+        for(Point point : points) {
             if(point.y < 0) { continue; }
             map[point.y][point.x] = -1;
         }
@@ -151,7 +148,7 @@ public abstract class Tetromino {
 
         clearTetromino(map);
 
-        for(Point point: drawPoints) {
+        for(Point point: points) {
             point.x--;
         }
 
@@ -167,7 +164,7 @@ public abstract class Tetromino {
 
         clearTetromino(map);
 
-        for (Point point : drawPoints) {
+        for (Point point : points) {
             point.x++;
         }
 
