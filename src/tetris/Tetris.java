@@ -53,7 +53,7 @@ public class Tetris extends GameEngine {
         } else if(e.getKeyCode() == DOWN) {
             handleGoDown();
         } else if(e.getKeyCode() == UP) {
-            currentTetromino.nextRotation(tilesMap);
+            currentTetromino.nextRotation(tilesMap, currentTetromino);
         }
 
         drawMap();

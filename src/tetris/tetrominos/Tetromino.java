@@ -1,8 +1,6 @@
 package tetris.tetrominos;
 
 import tetris.Tetris;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -13,6 +11,9 @@ public abstract class Tetromino {
     };
     static int startX = 3;
     static int startY = 1;
+
+
+    public static Tetromino currentTetromino = generateRandomTetromino();
 
     Point[] drawPoints = new Point[4];
 
@@ -25,8 +26,7 @@ public abstract class Tetromino {
 
     public Tetromino() { }
 
-    public final void nextRotation(int[][] map) {
-
+    public final void nextRotation(int[][] map, Tetromino currentTetromino) {
         int[][] tempMap = Tetris.copyMap(map);
 
         clearTetromino(map);
@@ -35,6 +35,18 @@ public abstract class Tetromino {
         rotationNumber = rotationNumber > 3 ? 0 : rotationNumber;
 
         rotate(map, rotationNumber);
+
+        if(!currentTetromino.canGoDown(map)) {
+            rotationNumber--;
+            rotationNumber = rotationNumber < 0 ? 3 : rotationNumber;
+
+            //Rotate back
+            rotate(map, rotationNumber);
+            
+            for(int row = 0; row < map.length; row++) {
+                map[0] = tempMap[0];
+            }
+        }
     }
 
     protected abstract void rotate(int[][] map, int rotationNumber);
@@ -89,9 +101,11 @@ public abstract class Tetromino {
         Point[] lowestPoints = getLowestPoints();
 
         for(Point point: lowestPoints) {
-            if(point.y == 19 || map[point.y+1][point.x] != -1) {
+            if(point.x >= 10 || point.x <= -1)
                 return false;
-            }
+
+            if(point.y >= 19 || map[point.y+1][point.x] != -1)
+                return false;
         }
 
         return true;
