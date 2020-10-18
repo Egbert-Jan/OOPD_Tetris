@@ -1,15 +1,17 @@
+package tetris;
+
 import nl.han.ica.oopg.engine.GameEngine;
 import nl.han.ica.oopg.objects.Sprite;
 import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
 import nl.han.ica.oopg.view.View;
-import tetrominos.*;
+import tetris.tetrominos.*;
 
 import java.awt.event.KeyEvent;
 
 public class Tetris extends GameEngine {
-    private static String MEDIA_URL = "src/media/";
+    private static String MEDIA_URL = "src/tetris/media/";
 
     private final int TILE_SIZE = 35;
 
@@ -50,6 +52,8 @@ public class Tetris extends GameEngine {
             currentTetromino.goRight(tilesMap);
         } else if(e.getKeyCode() == DOWN) {
             handleGoDown();
+        } else if(e.getKeyCode() == UP) {
+            currentTetromino.nextRotation(tilesMap);
         }
 
         drawMap();
@@ -62,7 +66,7 @@ public class Tetris extends GameEngine {
     }
 
     void drawMap() {
-        //Draw tetrominos
+        //Draw tetris.tetrominos
         for(int y = 0; y < tilesMap.length; y++) {
             for(int x = 0; x < tilesMap.length; x++) {
                 if(currentTetromino.shouldDraw(x, y)) {
@@ -107,5 +111,20 @@ public class Tetris extends GameEngine {
             map[y] = row;
         }
         return map;
+    }
+
+    public static int[][] copyMap(int[][] map) {
+
+        int[][] copyMap = new int[20][10];
+
+        for(int y = 0; y < 20; y++) {
+            int[] row = new int[10];
+            for (int x = 0; x < 10; x++) {
+                row[x] = map[y][x];
+            }
+            copyMap[y] = row;
+        }
+
+        return copyMap;
     }
 }

@@ -1,5 +1,8 @@
+package tetris;
+
 import nl.han.ica.oopg.alarm.Alarm;
 import nl.han.ica.oopg.alarm.IAlarmListener;
+import tetris.Tetris;
 
 public class DecendTimer implements IAlarmListener {
     private Tetris world;
@@ -10,7 +13,7 @@ public class DecendTimer implements IAlarmListener {
     }
 
     private void startAlarm() {
-        Alarm alarm = new Alarm("Fall Timer", 2);
+        Alarm alarm = new Alarm("Fall Timer", 1);
         alarm.addTarget(this);
         alarm.start();
     }

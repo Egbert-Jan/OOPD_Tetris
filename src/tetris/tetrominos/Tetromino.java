@@ -1,18 +1,43 @@
-package tetrominos;
+package tetris.tetrominos;
 
+import tetris.Tetris;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
-public class Tetromino {
-    public static final Class[] TETROMINOS = { Straight.class, LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class };
-    static int startX = 4;
+
+public abstract class Tetromino {
+    public static final Class[] TETROMINOS = { Pyramid.class,
+//            LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class
+    };
+    static int startX = 3;
     static int startY = 1;
 
-    Point[] points = new Point[4];
+    Point[] drawPoints = new Point[4];
+
+    Point[][] allRotationPoints = new Point[4][4];
 
     public int type = 0;
 
+    //0 = UP, 1 = Right, 2 = Down, 3 = Left
+    protected int rotationNumber = 0;
+
     public Tetromino() { }
+
+    public final void nextRotation(int[][] map) {
+
+        int[][] tempMap = Tetris.copyMap(map);
+
+        clearTetromino(map);
+
+        rotationNumber++;
+        rotationNumber = rotationNumber > 3 ? 0 : rotationNumber;
+
+        rotate(map, rotationNumber);
+    }
+
+    protected abstract void rotate(int[][] map, int rotationNumber);
 
     public static Tetromino generateRandomTetromino() {
         try {
@@ -26,7 +51,7 @@ public class Tetromino {
     private Point[] getLowestPoints() {
         HashMap<Integer, Point> hashMap = new HashMap<>();
 
-        for(Point point : points) {
+        for(Point point : drawPoints) {
             hashMap.putIfAbsent(point.x, point);
 
             if(hashMap.get(point.x).y < point.y)
@@ -41,7 +66,7 @@ public class Tetromino {
     private Point[] getSidePoints(boolean rightSide) {
         HashMap<Integer, Point> hashMap = new HashMap<>();
 
-        for(Point point : points) {
+        for(Point point : drawPoints) {
             hashMap.putIfAbsent(point.y, point);
 
             if(rightSide) {
@@ -60,7 +85,7 @@ public class Tetromino {
         return hashMap.values().toArray(new Point[0]);
     }
 
-    private boolean canGoDown(int[][] map) {
+    protected boolean canGoDown(int[][] map) {
         Point[] lowestPoints = getLowestPoints();
 
         for(Point point: lowestPoints) {
@@ -73,7 +98,7 @@ public class Tetromino {
     }
 
     public boolean shouldDraw(int x, int y) {
-        for (Point point: points) {
+        for (Point point: drawPoints) {
             if(point.x == x && point.y == y) {
                 return true;
             }
@@ -89,15 +114,15 @@ public class Tetromino {
 
         clearTetromino(map);
 
-        for(Point point: points) {
+        for(Point point: drawPoints) {
             point.y++;
         }
 
         return true;
     }
 
-    private void clearTetromino(int[][] map) {
-        for(Point point : points) {
+    protected void clearTetromino(int[][] map) {
+        for(Point point : drawPoints) {
             if(point.y < 0) { continue; }
             map[point.y][point.x] = -1;
         }
@@ -112,7 +137,7 @@ public class Tetromino {
 
         clearTetromino(map);
 
-        for(Point point: points) {
+        for(Point point: drawPoints) {
             point.x--;
         }
 
@@ -128,7 +153,7 @@ public class Tetromino {
 
         clearTetromino(map);
 
-        for (Point point : points) {
+        for (Point point : drawPoints) {
             point.x++;
         }
 
