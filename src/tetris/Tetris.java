@@ -61,8 +61,41 @@ public class Tetris extends GameEngine {
 
     void handleGoDown() {
         if(!currentTetromino.goDown(tilesMap)) {
+
+            for(int y = 0; y < tilesMap.length; y++) {
+                if(isFullRow(tilesMap[y])) {
+                    moveRowsDown(y);
+                }
+            }
+
             currentTetromino = Tetromino.generateRandomTetromino();
         }
+    }
+
+    private void moveRowsDown(int row) {
+        if(row == 0) {
+            int[] newRow = new int[10];
+
+            for(int i = 0; i < 10; i++) {
+                newRow[i] = -1;
+            }
+
+            tilesMap[0] = newRow;
+            return;
+        }
+
+        tilesMap[row] = tilesMap[row-1];
+
+        moveRowsDown(row-1);
+    }
+
+    private boolean isFullRow(int[] row) {
+        for(int i = 0; i < row.length; i++) {
+            if(row[i] == -1)
+                return false;
+        }
+
+        return true;
     }
 
     void drawMap() {
