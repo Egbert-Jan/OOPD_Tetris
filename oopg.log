@@ -374,3 +374,7 @@ FAILURE: java.lang.NullPointerException
 FAILURE: java.lang.NullPointerException
 [2020-57-18 04:57:56.46] 
 FAILURE: java.lang.NullPointerException
+[2020-20-19 07:20:57.964] 
+FAILURE: java.io.FileNotFoundException: src/src/tetris/media/sounds/highScore.txt (No such file or directory)
+[2020-22-19 07:22:10.67] 
+FAILURE: java.io.FileNotFoundException: src/src/tetris/media/sounds/highScore.txt (No such file or directory)

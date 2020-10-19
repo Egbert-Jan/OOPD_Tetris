@@ -2,6 +2,8 @@ package tetris;
 
 import nl.han.ica.oopg.engine.GameEngine;
 import nl.han.ica.oopg.objects.Sprite;
+import nl.han.ica.oopg.persistence.FilePersistence;
+import nl.han.ica.oopg.persistence.IPersistence;
 import nl.han.ica.oopg.sound.Sound;
 import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
@@ -26,6 +28,9 @@ public class Tetris extends GameEngine {
     private Sound popSound = new Sound(this, MEDIA_URL + "sounds/popSound.mp3");
     private Sound levelUpSound = new Sound(this, MEDIA_URL + "sounds/levelUp.wav");
 
+    private IPersistence persistence;
+    private int highScore;
+
     public static void main(String[] args) {
         Tetris main = new Tetris();
         main.runSketch();
@@ -45,6 +50,8 @@ public class Tetris extends GameEngine {
         drawMap();
 
         decendTimer = new DecendTimer(this);
+        persistence = new FilePersistence("tetris/media/files/highScore.txt");
+        highScore = Integer.parseInt(persistence.loadDataString());
     }
 
     @Override
@@ -112,9 +119,14 @@ public class Tetris extends GameEngine {
 
             if(!currentTetromino.canGoDown(tilesMap)) {
                 System.out.println(totalPoints);
+                if(totalPoints > highScore) {
+                    persistence.saveData(Integer.toString(totalPoints));
+                    highScore = totalPoints;
+                }
+
                 totalPoints = 0;
-                tilesMap = createMap();
                 currentTetromino = Tetromino.generateRandomTetromino();
+                tilesMap = createMap();
             }
 
             return false;
