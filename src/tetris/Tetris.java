@@ -48,8 +48,7 @@ public class Tetris extends GameEngine {
     }
 
     @Override
-    public void update() {
-    }
+    public void update() { }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -62,6 +61,11 @@ public class Tetris extends GameEngine {
         drawMap();
     }
 
+    /**
+     *
+     * @param keyCode of the key that has been pressed
+     * @return if the keypress action has been executed
+     */
     private boolean handleKeypress(int keyCode) {
         if(keyCode == LEFT) {
             return currentTetromino.goLeft(tilesMap);
@@ -76,6 +80,10 @@ public class Tetris extends GameEngine {
         return false;
     }
 
+    /**
+     * Move the Tetromino down and other behaviour that comes with it
+     * @return boolean if the Tetromino went down
+     */
     boolean handleGoDown() {
         if(!currentTetromino.goDown(tilesMap)) {
             int amountOfRows = 0;
@@ -115,6 +123,10 @@ public class Tetris extends GameEngine {
         return true;
     }
 
+    /**
+     * Recursive function that moves all the rows above the initial row down
+     * @param row the row to start from
+     */
     private void moveRowsDown(int row) {
         if(row == 0) {
             int[] newRow = new int[10];
@@ -132,6 +144,11 @@ public class Tetris extends GameEngine {
         moveRowsDown(row-1);
     }
 
+    /**
+     * Check if this row is full with Tetrominos
+     * @param row
+     * @return a boolean if the row is full with Tetrominos
+     */
     private boolean isFullRow(int[] row) {
         for(int i = 0; i < row.length; i++) {
             if(row[i] == Tetromino.backgroundNr)
@@ -141,8 +158,10 @@ public class Tetris extends GameEngine {
         return true;
     }
 
+    /**
+     * Draws all the Tetromino's on the screen
+     */
     void drawMap() {
-        //Draw tetris.tetrominos
         for(int y = 0; y < tilesMap.length; y++) {
             for(int x = 0; x < tilesMap.length; x++) {
                 if(currentTetromino.shouldDraw(x, y)) {
@@ -154,6 +173,10 @@ public class Tetris extends GameEngine {
         super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
     }
 
+    /**
+     * Creates TileTypes with different colors to show on the screen
+     * @return array with different TileTypes
+     */
     private TileType[] createTiles() {
         Sprite backgroundTile = new Sprite(Tetris.MEDIA_URL.concat("backgroundTile.png"));
 
@@ -177,7 +200,10 @@ public class Tetris extends GameEngine {
         };
     }
 
-    //Creates a map 20 by 10
+    /**
+     * Creates map of 20 by 10
+     * @return a two dimensional array of 20 by 10
+     */
     private int[][] createMap() {
         int[][] map = new int[20][10];
 
@@ -191,8 +217,12 @@ public class Tetris extends GameEngine {
         return map;
     }
 
+    /**
+     * Copies the two dimensional by value
+     * @param map
+     * @return the same map as input but by value
+     */
     public static int[][] copyMap(int[][] map) {
-
         int[][] copyMap = new int[20][10];
 
         for(int y = 0; y < 20; y++) {
