@@ -2,6 +2,7 @@ package tetris;
 
 import nl.han.ica.oopg.engine.GameEngine;
 import nl.han.ica.oopg.objects.Sprite;
+import nl.han.ica.oopg.sound.Sound;
 import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
@@ -21,6 +22,9 @@ public class Tetris extends GameEngine {
     private DecendTimer decendTimer;
 
     private int totalPoints = 0;
+
+    private Sound popSound = new Sound(this, MEDIA_URL + "sounds/popSound.mp3");
+    private Sound levelUpSound = new Sound(this, MEDIA_URL + "sounds/levelUp.wav");
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
@@ -50,20 +54,29 @@ public class Tetris extends GameEngine {
     @Override
     public void keyPressed(KeyEvent e) {
 
-        if(e.getKeyCode() == LEFT) {
-            currentTetromino.goLeft(tilesMap);
-        } else if(e.getKeyCode() == RIGHT) {
-            currentTetromino.goRight(tilesMap);
-        } else if(e.getKeyCode() == DOWN) {
-            handleGoDown();
-        } else if(e.getKeyCode() == UP) {
-            currentTetromino.nextRotation(tilesMap, currentTetromino);
+        if(handleKeypress(e.getKeyCode())) {
+            popSound.rewind();
+            popSound.play();
         }
 
         drawMap();
     }
 
-    void handleGoDown() {
+    private boolean handleKeypress(int keyCode) {
+        if(keyCode == LEFT) {
+            return currentTetromino.goLeft(tilesMap);
+        } else if(keyCode == RIGHT) {
+            return currentTetromino.goRight(tilesMap);
+        } else if(keyCode == DOWN) {
+            return handleGoDown();
+        } else if(keyCode == UP) {
+            return currentTetromino.nextRotation(tilesMap, currentTetromino);
+        }
+
+        return false;
+    }
+
+    boolean handleGoDown() {
         if(!currentTetromino.goDown(tilesMap)) {
             int amountOfRows = 0;
 
@@ -71,6 +84,9 @@ public class Tetris extends GameEngine {
                 if (isFullRow(tilesMap[y])) {
                     moveRowsDown(y);
                     amountOfRows++;
+
+                    levelUpSound.rewind();
+                    levelUpSound.play();
                 }
             }
 
@@ -87,10 +103,16 @@ public class Tetris extends GameEngine {
             currentTetromino = Tetromino.generateRandomTetromino();
 
             if(!currentTetromino.canGoDown(tilesMap)) {
+                System.out.println(totalPoints);
+                totalPoints = 0;
                 tilesMap = createMap();
                 currentTetromino = Tetromino.generateRandomTetromino();
             }
+
+            return false;
         }
+
+        return true;
     }
 
     private void moveRowsDown(int row) {

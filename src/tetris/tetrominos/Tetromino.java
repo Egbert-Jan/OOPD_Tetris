@@ -4,13 +4,18 @@ import tetris.Tetris;
 import java.util.HashMap;
 import java.util.Random;
 
+interface ICanPlaySound {
+//    void play();
+}
 
-public abstract class Tetromino {
-    public static final Class[] TETROMINOS = {
+
+public abstract class Tetromino implements ICanPlaySound {
+    private static final Class[] TETROMINOS = {
            Straight.class, LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class
     };
-    static int startX = 3;
-    static int startY = 1;
+
+    final int startX = 3;
+    final int startY = 1;
 
     public static final int backgroundNr = 0;
 
@@ -19,11 +24,11 @@ public abstract class Tetromino {
     public int type = 0;
 
     //0 = UP, 1 = Right, 2 = Down, 3 = Left
-    protected int rotationNumber = 0;
+    private int rotationNumber = 0;
 
-    public Tetromino() { }
+    Tetromino() { }
 
-    public final void nextRotation(int[][] map, Tetromino currentTetromino) {
+    public final boolean nextRotation(int[][] map, Tetromino currentTetromino) {
         int[][] tempMap = Tetris.copyMap(map);
 
         clearTetromino(map);
@@ -43,7 +48,11 @@ public abstract class Tetromino {
             for(int row = 0; row < map.length; row++) {
                 map[0] = tempMap[0];
             }
+
+            return false;
         }
+
+        return true;
     }
 
     protected abstract void rotate(int[][] map, int rotationNumber);
