@@ -4,7 +4,7 @@ public class Pyramid extends Tetromino {
     public Pyramid() {
         super();
 
-        type = 5;
+        type = 6;
 
         int sX = startX;
         int sY = startY;

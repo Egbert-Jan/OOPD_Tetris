@@ -4,7 +4,7 @@ public class LeftHook extends Tetromino {
     public LeftHook() {
         super();
 
-        type = 1;
+        type = 2;
 
         int sX = startX;
         int sY = startY;

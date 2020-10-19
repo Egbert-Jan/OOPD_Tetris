@@ -4,7 +4,7 @@ public class RightHook extends Tetromino {
     public RightHook() {
         super();
 
-        type = 2;
+        type = 3;
 
         int sX = startX;
         int sY = startY;

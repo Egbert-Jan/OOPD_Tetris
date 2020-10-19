@@ -4,7 +4,7 @@ public class Square extends Tetromino {
     public Square() {
         super();
 
-        type = 3;
+        type = 4;
 
         points[3] = new Point(startX, startY+1);
         points[0] = new Point(startX, startY);

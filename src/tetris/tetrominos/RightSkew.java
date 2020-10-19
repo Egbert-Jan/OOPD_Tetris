@@ -4,7 +4,7 @@ public class RightSkew extends Tetromino {
     public RightSkew() {
         super();
 
-        type = 6;
+        type = 7;
 
         int sX = startX;
         int sY = startY;

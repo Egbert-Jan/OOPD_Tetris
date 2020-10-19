@@ -12,7 +12,7 @@ public abstract class Tetromino {
     static int startX = 3;
     static int startY = 1;
 
-    public static Tetromino currentTetromino = generateRandomTetromino();
+    public static final int backgroundNr = 0;
 
     Point[] points = new Point[4];
 
@@ -94,14 +94,14 @@ public abstract class Tetromino {
         return hashMap.values().toArray(new Point[0]);
     }
 
-    protected boolean canGoDown(int[][] map) {
+    public boolean canGoDown(int[][] map) {
         Point[] lowestPoints = getLowestPoints();
 
         for(Point point: lowestPoints) {
             if(point.x >= 10 || point.x <= -1)
                 return false;
 
-            if(point.y >= 19 || map[point.y+1][point.x] != -1)
+            if(point.y >= 19 || map[point.y+1][point.x] != backgroundNr)
                 return false;
         }
 
@@ -135,13 +135,13 @@ public abstract class Tetromino {
     protected void clearTetromino(int[][] map) {
         for(Point point : points) {
             if(point.y < 0) { continue; }
-            map[point.y][point.x] = -1;
+            map[point.y][point.x] = backgroundNr;
         }
     }
 
     public boolean goLeft(int[][] map) {
         for(Point point: getSidePoints(false)) {
-            if(point.x == 0 || map[point.y][point.x-1] != -1) {
+            if(point.x == 0 || map[point.y][point.x-1] != backgroundNr) {
                 return false;
             }
         }
@@ -157,7 +157,7 @@ public abstract class Tetromino {
 
     public boolean goRight(int[][] map) {
         for(Point point: getSidePoints(true)) {
-            if(point.x == 9 || map[point.y][point.x+1] != -1) {
+            if(point.x == 9 || map[point.y][point.x+1] != backgroundNr) {
                 return false;
             }
         }

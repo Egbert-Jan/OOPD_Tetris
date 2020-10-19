@@ -4,7 +4,7 @@ public class Straight extends Tetromino {
     public Straight() {
         super();
 
-        type = 0;
+        type = 1;
 
         int sX = startX;
         int sY = startY;

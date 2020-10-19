@@ -18,7 +18,9 @@ public class Tetris extends GameEngine {
     private int tilesMap[][] = createMap();
     private TileType[] tileTypes = createTiles();
     private Tetromino currentTetromino = Tetromino.generateRandomTetromino();
-    private DecendTimer decendTimer = new DecendTimer(this);
+    private DecendTimer decendTimer;
+
+    private int totalPoints = 0;
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
@@ -37,6 +39,8 @@ public class Tetris extends GameEngine {
         size(worldWidth, worldHeight);
 
         drawMap();
+
+        decendTimer = new DecendTimer(this);
     }
 
     @Override
@@ -61,14 +65,31 @@ public class Tetris extends GameEngine {
 
     void handleGoDown() {
         if(!currentTetromino.goDown(tilesMap)) {
+            int amountOfRows = 0;
 
-            for(int y = 0; y < tilesMap.length; y++) {
-                if(isFullRow(tilesMap[y])) {
+            for (int y = 0; y < tilesMap.length; y++) {
+                if (isFullRow(tilesMap[y])) {
                     moveRowsDown(y);
+                    amountOfRows++;
                 }
             }
 
+            if (amountOfRows == 1) {
+                totalPoints += 40;
+            } else if (amountOfRows == 2) {
+                totalPoints += 100;
+            } else if (amountOfRows == 3) {
+                totalPoints += 300;
+            } else if (amountOfRows == 4) {
+                totalPoints += 1200;
+            }
+
             currentTetromino = Tetromino.generateRandomTetromino();
+
+            if(!currentTetromino.canGoDown(tilesMap)) {
+                tilesMap = createMap();
+                currentTetromino = Tetromino.generateRandomTetromino();
+            }
         }
     }
 
@@ -77,7 +98,7 @@ public class Tetris extends GameEngine {
             int[] newRow = new int[10];
 
             for(int i = 0; i < 10; i++) {
-                newRow[i] = -1;
+                newRow[i] = Tetromino.backgroundNr;
             }
 
             tilesMap[0] = newRow;
@@ -91,7 +112,7 @@ public class Tetris extends GameEngine {
 
     private boolean isFullRow(int[] row) {
         for(int i = 0; i < row.length; i++) {
-            if(row[i] == -1)
+            if(row[i] == Tetromino.backgroundNr)
                 return false;
         }
 
@@ -112,6 +133,8 @@ public class Tetris extends GameEngine {
     }
 
     private TileType[] createTiles() {
+        Sprite backgroundTile = new Sprite(Tetris.MEDIA_URL.concat("backgroundTile.png"));
+
         Sprite lightBlueSprite = new Sprite(Tetris.MEDIA_URL.concat("lightBlueTile.png"));
         Sprite blueSprite = new Sprite(Tetris.MEDIA_URL.concat("blueTile.png"));
         Sprite orangeSprite = new Sprite(Tetris.MEDIA_URL.concat("orangeTile.png"));
@@ -120,8 +143,8 @@ public class Tetris extends GameEngine {
         Sprite purpleSprite = new Sprite(Tetris.MEDIA_URL.concat("purpleTile.png"));
         Sprite redSprite = new Sprite(Tetris.MEDIA_URL.concat("redTile.png"));
 
-
         return new TileType[] {
+                new TileType<>(Tile.class, backgroundTile),
                 new TileType<>(Tile.class, lightBlueSprite),
                 new TileType<>(Tile.class, blueSprite),
                 new TileType<>(Tile.class, orangeSprite),
@@ -139,7 +162,7 @@ public class Tetris extends GameEngine {
         for(int y = 0; y < 20; y++) {
             int[] row = new int[10];
             for(int x = 0; x < 10; x++) {
-                row[x] = -1;
+                row[x] = Tetromino.backgroundNr;
             }
             map[y] = row;
         }
