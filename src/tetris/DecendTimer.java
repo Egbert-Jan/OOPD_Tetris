@@ -20,8 +20,9 @@ public class DecendTimer implements IAlarmListener {
 
     @Override
     public void triggerAlarm(String alarmName) {
-        world.handleGoDown();
-        world.drawMap();
-        startAlarm();
+        if(!world.gameIsStopped)
+            world.handleGoDown();
+            world.drawMap();
+            startAlarm();
     }
 }

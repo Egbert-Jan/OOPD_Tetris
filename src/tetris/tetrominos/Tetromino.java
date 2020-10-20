@@ -186,7 +186,7 @@ public abstract class Tetromino {
             if(point.x >= 10 || point.x <= -1)
                 return false;
 
-            if(point.y >= 19 || map[point.y+1][point.x] != backgroundNr)
+            if(point.y >= 20 || map[point.y+1][point.x] != backgroundNr)
                 return false;
         }
 
@@ -212,7 +212,7 @@ public abstract class Tetromino {
      * Clear this Tetromino from the map
      * @param map
      */
-    protected void clearTetromino(int[][] map) {
+    public void clearTetromino(int[][] map) {
         for(Point point : points) {
             if(point.y < 0) { continue; }
             map[point.y][point.x] = backgroundNr;

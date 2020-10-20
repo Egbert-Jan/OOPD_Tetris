@@ -1,22 +1,29 @@
 package tetris;
 
+import com.sun.tools.javac.comp.Enter;
+import nl.han.ica.oopg.dashboard.Dashboard;
 import nl.han.ica.oopg.engine.GameEngine;
 import nl.han.ica.oopg.objects.Sprite;
+import nl.han.ica.oopg.objects.TextObject;
 import nl.han.ica.oopg.persistence.FilePersistence;
 import nl.han.ica.oopg.persistence.IPersistence;
 import nl.han.ica.oopg.sound.Sound;
 import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
+import nl.han.ica.oopg.userinput.IKeyInput;
 import nl.han.ica.oopg.view.View;
 import tetris.tetrominos.*;
 
 import java.awt.event.KeyEvent;
 
-public class Tetris extends GameEngine {
+public class Tetris extends GameEngine implements IKeyInput {
     private static String MEDIA_URL = "src/tetris/media/";
 
     private final int TILE_SIZE = 35;
+
+    private int worldWidth = TILE_SIZE * 10;
+    private int worldHeight = TILE_SIZE * 21;
 
     private int tilesMap[][] = createMap();
     private TileType[] tileTypes = createTiles();
@@ -24,12 +31,19 @@ public class Tetris extends GameEngine {
     private DecendTimer decendTimer;
 
     private int totalPoints = 0;
+    boolean gameIsStopped = false;
+
+    private IPersistence persistence;
+    private int highScore;
 
     private Sound popSound = new Sound(this, MEDIA_URL + "sounds/popSound.mp3");
     private Sound levelUpSound = new Sound(this, MEDIA_URL + "sounds/levelUp.wav");
 
-    private IPersistence persistence;
-    private int highScore;
+    private TextObject currentScoreTextObject = new TextObject("Score: 0", 25);
+    private TextObject highScoreText = new TextObject("HighScore: 0", 25);
+    private TextObject currentScoreText = new TextObject("Score: 0", 25);
+    private TextObject newHighScoreText = new TextObject("New HighScore!", 25);
+    private TextObject continueText = new TextObject("Press Enter key to continue", 16);
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
@@ -38,11 +52,7 @@ public class Tetris extends GameEngine {
 
     @Override
     public void setupGame() {
-        int worldWidth = TILE_SIZE * 10;
-        int worldHeight = TILE_SIZE * 20;
-
         View view = new View(worldWidth, worldHeight);
-        view.setBackground(100, 100, 100);
         setView(view);
 
         size(worldWidth, worldHeight);
@@ -52,6 +62,12 @@ public class Tetris extends GameEngine {
         decendTimer = new DecendTimer(this);
         persistence = new FilePersistence("tetris/media/files/highScore.txt");
         highScore = Integer.parseInt(persistence.loadDataString());
+
+        currentScoreTextObject.setX(5);
+        currentScoreTextObject.setForeColor(255, 255, 255, 255);
+        addGameObject(currentScoreTextObject);
+
+        frameRate(30);
     }
 
     @Override
@@ -60,6 +76,12 @@ public class Tetris extends GameEngine {
     @Override
     public void keyPressed(KeyEvent e) {
 
+        if(e.getKeyCode() == RETURN || e.getKeyCode() == ENTER)
+            restartGame();
+
+        if(gameIsStopped)
+            return;
+
         if(handleKeypress(e.getKeyCode())) {
             popSound.rewind();
             popSound.play();
@@ -67,6 +89,15 @@ public class Tetris extends GameEngine {
 
         drawMap();
     }
+
+    /**
+     *  keyFunctions only work on a GameObject. Should change this
+     */
+    @Override
+    public void keyReleased(int keyCode, char key) { }
+
+    @Override
+    public void keyPressed(int keyCode, char key) { }
 
     /**
      *
@@ -115,18 +146,20 @@ public class Tetris extends GameEngine {
                 totalPoints += 1200;
             }
 
+            currentScoreTextObject.setText("Score: " + totalPoints);
+
             currentTetromino = Tetromino.generateRandomTetromino();
 
             if(!currentTetromino.canGoDown(tilesMap)) {
                 System.out.println(totalPoints);
+                currentTetromino.clearTetromino(tilesMap);
+
                 if(totalPoints > highScore) {
                     persistence.saveData(Integer.toString(totalPoints));
                     highScore = totalPoints;
                 }
 
-                totalPoints = 0;
-                currentTetromino = Tetromino.generateRandomTetromino();
-                tilesMap = createMap();
+                showEndGameView(totalPoints > highScore);
             }
 
             return false;
@@ -217,9 +250,9 @@ public class Tetris extends GameEngine {
      * @return a two dimensional array of 20 by 10
      */
     private int[][] createMap() {
-        int[][] map = new int[20][10];
+        int[][] map = new int[21][10];
 
-        for(int y = 0; y < 20; y++) {
+        for(int y = 0; y < 21; y++) {
             int[] row = new int[10];
             for(int x = 0; x < 10; x++) {
                 row[x] = Tetromino.backgroundNr;
@@ -235,9 +268,9 @@ public class Tetris extends GameEngine {
      * @return the same map as input but by value
      */
     public static int[][] copyMap(int[][] map) {
-        int[][] copyMap = new int[20][10];
+        int[][] copyMap = new int[21][10];
 
-        for(int y = 0; y < 20; y++) {
+        for(int y = 0; y < 21; y++) {
             int[] row = new int[10];
             for (int x = 0; x < 10; x++) {
                 row[x] = map[y][x];
@@ -246,5 +279,61 @@ public class Tetris extends GameEngine {
         }
 
         return copyMap;
+    }
+
+    private void showEndGameView(boolean newHighScore) {
+        gameIsStopped = true;
+
+        deleteGameOverObjects();
+
+        int width = worldWidth;
+        int height = worldHeight;
+
+//        Dashboard dashboard = new Dashboard(width/4, (height/2) - (width/2), width/2, width/2);
+//        dashboard.setBackground(100, 100, 100);
+
+        highScoreText.setText("HighScore: " + highScore);
+        highScoreText.setForeColor(255, 255, 255, 255);
+        highScoreText.setX(width/4);
+        highScoreText.setY(height/2 - 150);
+        addGameObject(highScoreText);
+
+        currentScoreText.setText("Score: " + totalPoints);
+        currentScoreText.setForeColor(255, 255, 255, 255);
+        currentScoreText.setX(width/4);
+        currentScoreText.setY(height/2 - 120);
+        addGameObject(currentScoreText);
+
+        if(newHighScore) {
+            newHighScoreText.setForeColor(255, 255, 255, 255);
+            newHighScoreText.setX(width / 4);
+            newHighScoreText.setY(height/2 - 80);
+            addGameObject(newHighScoreText);
+        }
+
+        continueText.setForeColor(255, 255, 255, 255);
+        continueText.setX(width / 4);
+        continueText.setY(height/2 - 40);
+        addGameObject(continueText);
+
+//        addDashboard(dashboard, 10);
+//        deleteDashboard(dashboard);
+    }
+
+    private void deleteGameOverObjects() {
+        deleteGameObject(highScoreText);
+        deleteGameObject(currentScoreText);
+        deleteGameObject(newHighScoreText);
+        deleteGameObject(continueText);
+    }
+
+    private void restartGame() {
+        deleteGameOverObjects();
+
+        totalPoints = 0;
+        currentTetromino = Tetromino.generateRandomTetromino();
+        tilesMap = createMap();
+
+        gameIsStopped = false;
     }
 }
