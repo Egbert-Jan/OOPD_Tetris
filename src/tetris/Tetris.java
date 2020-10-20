@@ -156,10 +156,11 @@ public class Tetris extends GameEngine implements IKeyInput {
 
                 if(totalPoints > highScore) {
                     persistence.saveData(Integer.toString(totalPoints));
-                    highScore = totalPoints;
                 }
 
                 showEndGameView(totalPoints > highScore);
+
+                highScore = totalPoints;
             }
 
             return false;
