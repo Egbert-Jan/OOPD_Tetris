@@ -1,7 +1,5 @@
 package tetris;
 
-import com.sun.tools.javac.comp.Enter;
-import nl.han.ica.oopg.dashboard.Dashboard;
 import nl.han.ica.oopg.engine.GameEngine;
 import nl.han.ica.oopg.objects.Sprite;
 import nl.han.ica.oopg.objects.TextObject;
@@ -17,7 +15,7 @@ import tetris.tetrominos.*;
 
 import java.awt.event.KeyEvent;
 
-public class Tetris extends GameEngine implements IKeyInput {
+public class Tetris extends GameEngine {
     private static String MEDIA_URL = "src/tetris/media/";
 
     private final int TILE_SIZE = 35;
@@ -43,7 +41,7 @@ public class Tetris extends GameEngine implements IKeyInput {
     private TextObject highScoreText = new TextObject("HighScore: 0", 25);
     private TextObject currentScoreText = new TextObject("Score: 0", 25);
     private TextObject newHighScoreText = new TextObject("New HighScore!", 25);
-    private TextObject continueText = new TextObject("Press Enter key to continue", 16);
+    private TextObject continueText = new TextObject("Press Enter to restart", 16);
 
     public static void main(String[] args) {
         Tetris main = new Tetris();
@@ -91,15 +89,6 @@ public class Tetris extends GameEngine implements IKeyInput {
     }
 
     /**
-     *  keyFunctions only work on a GameObject. Should change this
-     */
-    @Override
-    public void keyReleased(int keyCode, char key) { }
-
-    @Override
-    public void keyPressed(int keyCode, char key) { }
-
-    /**
      *
      * @param keyCode of the key that has been pressed
      * @return if the keypress action has been executed
@@ -113,10 +102,14 @@ public class Tetris extends GameEngine implements IKeyInput {
             return handleGoDown();
         } else if(keyCode == UP) {
             return currentTetromino.nextRotation(tilesMap, currentTetromino);
+        } else if(keyCode == ALT) {
+            while(handleGoDown());
+            return true;
         }
 
         return false;
     }
+
 
     /**
      * Move the Tetromino down and other behaviour that comes with it
@@ -124,6 +117,7 @@ public class Tetris extends GameEngine implements IKeyInput {
      */
     boolean handleGoDown() {
         if(!currentTetromino.goDown(tilesMap)) {
+            drawMap();
             int amountOfRows = 0;
 
             for (int y = 0; y < tilesMap.length; y++) {
@@ -154,11 +148,8 @@ public class Tetris extends GameEngine implements IKeyInput {
                 System.out.println(totalPoints);
                 currentTetromino.clearTetromino(tilesMap);
 
-                trySavingHighScore();
-
                 showEndGameView(totalPoints > highScore);
-
-                highScore = totalPoints;
+                trySavingHighScore();
             }
 
             return false;
@@ -167,9 +158,10 @@ public class Tetris extends GameEngine implements IKeyInput {
         return true;
     }
 
-    boolean trySavingHighScore() {
+    private boolean trySavingHighScore() {
         if(totalPoints > highScore) {
             persistence.saveData(Integer.toString(totalPoints));
+            highScore = totalPoints;
             return true;
         }
         return false;
@@ -215,8 +207,26 @@ public class Tetris extends GameEngine implements IKeyInput {
      * Draws all the Tetromino's on the screen
      */
     void drawMap() {
+        Point[] points = currentTetromino.getLowestPoints();
         for(int y = 0; y < tilesMap.length; y++) {
-            for(int x = 0; x < tilesMap.length; x++) {
+            for(int x = 0; x < tilesMap[y].length; x++) {
+
+                if(y == 0) {
+                    tilesMap[y][x] = 9;
+                }
+
+                if(tilesMap[y][x] == Tetromino.backgroundNr) {
+                    for (Point p : points) {
+                        if(x == p.x && y > p.y)
+                            tilesMap[y][x] = Tetromino.indicationNr;
+                    }
+                }
+
+                if(tilesMap[y][x] == Tetromino.indicationNr) {
+                    if(!containsX(points, x))
+                        tilesMap[y][x] = Tetromino.backgroundNr;
+                }
+
                 if(currentTetromino.shouldDraw(x, y)) {
                     tilesMap[y][x] = currentTetromino.type;
                 }
@@ -226,12 +236,23 @@ public class Tetris extends GameEngine implements IKeyInput {
         super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
     }
 
+    boolean containsX(Point[] points, int x) {
+        for (Point p : points) {
+            if(p.x == x)
+                return true;
+        }
+
+        return false;
+    }
+
     /**
      * Creates TileTypes with different colors to show on the screen
      * @return array with different TileTypes
      */
     private TileType[] createTiles() {
+        Sprite darkTopTile = new Sprite(Tetris.MEDIA_URL.concat("darkGrayTile3.png"));
         Sprite backgroundTile = new Sprite(Tetris.MEDIA_URL.concat("backgroundTile.png"));
+        Sprite indicationTile = new Sprite(Tetris.MEDIA_URL.concat("lightGrayTile3.png"));
 
         Sprite lightBlueSprite = new Sprite(Tetris.MEDIA_URL.concat("lightBlueTile.png"));
         Sprite blueSprite = new Sprite(Tetris.MEDIA_URL.concat("blueTile.png"));
@@ -250,6 +271,9 @@ public class Tetris extends GameEngine implements IKeyInput {
                 new TileType<>(Tile.class, greenSprite),
                 new TileType<>(Tile.class, purpleSprite),
                 new TileType<>(Tile.class, redSprite),
+
+                new TileType<>(Tile.class, indicationTile),
+                new TileType<>(Tile.class, darkTopTile),
         };
     }
 

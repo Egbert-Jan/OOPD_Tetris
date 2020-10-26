@@ -2,8 +2,10 @@ package tetris;
 
 import nl.han.ica.oopg.alarm.Alarm;
 import nl.han.ica.oopg.alarm.IAlarmListener;
-import tetris.Tetris;
 
+/**
+ * The timer that makes the Tetrominos fall
+ */
 public class DecendTimer implements IAlarmListener {
     private Tetris world;
 

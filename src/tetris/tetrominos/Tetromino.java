@@ -1,10 +1,14 @@
 package tetris.tetrominos;
 
 import tetris.Tetris;
+
 import java.util.HashMap;
 import java.util.Random;
 
 
+/**
+ * The base class of a Tetromino with all the shared functionality
+ */
 public abstract class Tetromino {
     private static final Class[] TETROMINOS = {
            Straight.class, LeftHook.class, RightHook.class, Square.class, LeftSkew.class, Pyramid.class, RightSkew.class
@@ -14,6 +18,7 @@ public abstract class Tetromino {
     final int startY = 1;
 
     public static final int backgroundNr = 0;
+    public static final int indicationNr = 8;
 
     Point[] points = new Point[4];
 
@@ -23,6 +28,7 @@ public abstract class Tetromino {
     private int rotationNumber = 0;
 
     Tetromino() { }
+
 
     /**
      * Move Tetromino down
@@ -51,7 +57,7 @@ public abstract class Tetromino {
      */
     public boolean goLeft(int[][] map) {
         for(Point point: getSidePoints(false)) {
-            if(point.x == 0 || map[point.y][point.x-1] != backgroundNr) {
+            if(point.x == 0 || (map[point.y][point.x-1] != backgroundNr && map[point.y][point.x-1] != indicationNr)) {
                 return false;
             }
         }
@@ -72,7 +78,7 @@ public abstract class Tetromino {
      */
     public boolean goRight(int[][] map) {
         for(Point point: getSidePoints(true)) {
-            if(point.x == 9 || map[point.y][point.x+1] != backgroundNr) {
+            if(point.x == 9 || (map[point.y][point.x+1] != backgroundNr && map[point.y][point.x+1] != indicationNr)) {
                 return false;
             }
         }
@@ -131,7 +137,7 @@ public abstract class Tetromino {
      * Get the lowest points of the Tetromino
      * @return an array with the lowest points of the Tetromino
      */
-    private Point[] getLowestPoints() {
+    public Point[] getLowestPoints() {
         HashMap<Integer, Point> hashMap = new HashMap<>();
 
         for(Point point : points) {
@@ -179,14 +185,13 @@ public abstract class Tetromino {
      * @return a boolean value if the Tetromino can move down
      */
     public boolean canGoDown(int[][] map) {
-
         Point[] lowestPoints = getLowestPoints();
 
         for(Point point: lowestPoints) {
             if(point.x >= 10 || point.x <= -1)
                 return false;
 
-            if(point.y >= 20 || map[point.y+1][point.x] != backgroundNr)
+            if(point.y >= 20 || (map[point.y+1][point.x] != backgroundNr && map[point.y+1][point.x] != indicationNr))
                 return false;
         }
 
