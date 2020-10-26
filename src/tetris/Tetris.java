@@ -154,9 +154,7 @@ public class Tetris extends GameEngine implements IKeyInput {
                 System.out.println(totalPoints);
                 currentTetromino.clearTetromino(tilesMap);
 
-                if(totalPoints > highScore) {
-                    persistence.saveData(Integer.toString(totalPoints));
-                }
+                trySavingHighScore();
 
                 showEndGameView(totalPoints > highScore);
 
@@ -168,6 +166,15 @@ public class Tetris extends GameEngine implements IKeyInput {
 
         return true;
     }
+
+    boolean trySavingHighScore() {
+        if(totalPoints > highScore) {
+            persistence.saveData(Integer.toString(totalPoints));
+            return true;
+        }
+        return false;
+    }
+
 
     /**
      * Recursive function that moves all the rows above the initial row down
@@ -330,6 +337,8 @@ public class Tetris extends GameEngine implements IKeyInput {
 
     private void restartGame() {
         deleteGameOverObjects();
+
+        trySavingHighScore();
 
         totalPoints = 0;
         currentTetromino = Tetromino.generateRandomTetromino();
