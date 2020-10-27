@@ -204,7 +204,7 @@ public abstract class Tetromino {
      * @param y position of the place to draw
      * @return a boolean value if a part of the Tetromino has to be drawn on the x,y position
      */
-    public boolean shouldDraw(int x, int y) {
+    public boolean containsPointAt(int x, int y) {
         for (Point point: points) {
             if(point.x == x && point.y == y) {
                 return true;

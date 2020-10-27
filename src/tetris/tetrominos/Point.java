@@ -15,4 +15,13 @@ public class Point {
     public boolean equals(Point p) {
         return p.x == this.x && p.y == this.y;
     }
+
+    public static boolean containsX(Point[] points, int x) {
+        for (Point p : points) {
+            if(p.x == x)
+                return true;
+        }
+
+        return false;
+    }
 }
