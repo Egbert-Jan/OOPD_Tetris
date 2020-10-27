@@ -251,26 +251,17 @@ public class Tetris extends GameEngine {
                 }
 
                 if(tilesMap[y][x] == Tetromino.indicationNr) {
-                    if(!containsX(points, x))
+                    if(!Point.containsX(points, x))
                         tilesMap[y][x] = Tetromino.backgroundNr;
                 }
 
-                if(currentTetromino.shouldDraw(x, y)) {
+                if(currentTetromino.containsPointAt(x, y)) {
                     tilesMap[y][x] = currentTetromino.type;
                 }
             }
         }
 
         super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
-    }
-
-    boolean containsX(Point[] points, int x) {
-        for (Point p : points) {
-            if(p.x == x)
-                return true;
-        }
-
-        return false;
     }
 
     /**

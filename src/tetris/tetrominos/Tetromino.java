@@ -50,16 +50,25 @@ public abstract class Tetromino {
         return true;
     }
 
+    private boolean canGoLeft(int[][] map) {
+        for(Point point: getSidePoints(false)) {
+            if(point.x == 0)
+                return false;
+
+            if(point.x > 0 && (map[point.y][point.x-1] != backgroundNr && map[point.y][point.x-1] != indicationNr))
+                return false;
+        }
+        return true;
+    }
+
     /**
      * Move Tetromino left
      * @param map
      * @return boolean value if the Tetromino moved left
      */
     public boolean goLeft(int[][] map) {
-        for(Point point: getSidePoints(false)) {
-            if(point.x == 0 || (map[point.y][point.x-1] != backgroundNr && map[point.y][point.x-1] != indicationNr)) {
-                return false;
-            }
+        if(!canGoLeft(map)) {
+            return false;
         }
 
         clearTetromino(map);
@@ -71,16 +80,25 @@ public abstract class Tetromino {
         return true;
     }
 
+    private boolean canGoRight(int[][] map) {
+        for(Point point: getSidePoints(true)) {
+            if(point.x == 9)
+                return false;
+
+            if(point.x < 9 && map[point.y][point.x+1] != backgroundNr && map[point.y][point.x+1] != indicationNr)
+                return false;
+        }
+        return true;
+    }
+
     /**
      * Move Tetromino right
      * @param map
      * @return boolean value if the Tetromino moved right
      */
     public boolean goRight(int[][] map) {
-        for(Point point: getSidePoints(true)) {
-            if(point.x == 9 || (map[point.y][point.x+1] != backgroundNr && map[point.y][point.x+1] != indicationNr)) {
-                return false;
-            }
+        if(!canGoRight(map)) {
+            return false;
         }
 
         clearTetromino(map);
@@ -108,7 +126,46 @@ public abstract class Tetromino {
 
         rotate(map, rotationNumber);
 
-        if(!currentTetromino.canGoDown(map)) {
+        if(!canGoDown(map)) {
+
+            //Kan niet omlaag
+
+            int status = 0;
+
+
+            if (goRight(map)) {
+                if (canGoDown(map)) {
+                    return true;
+                } else {
+                    goLeft(map);
+                }
+            }
+
+
+            if(goLeft(map)) {
+                if (canGoDown(map)) {
+                    return true;
+                } else {
+                    goRight(map);
+                }
+            }
+
+            reverseRotation(map, tempMap, 0);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public void reverseRotation(int[][] map, int[][] tempMap, int status) {
+        if(!canGoDown(map)) {
+////            if(status == 1) {
+////                goRight(map);
+////            } else if(status == 2) {
+////                goLeft(map);
+////            }
+
             rotationNumber--;
             rotationNumber = rotationNumber < 0 ? 3 : rotationNumber;
 
@@ -119,10 +176,10 @@ public abstract class Tetromino {
                 map[0] = tempMap[0];
             }
 
-            return false;
+//            return false;
         }
 
-        return true;
+//        return true;
     }
 
     /**
@@ -204,7 +261,7 @@ public abstract class Tetromino {
      * @param y position of the place to draw
      * @return a boolean value if a part of the Tetromino has to be drawn on the x,y position
      */
-    public boolean shouldDraw(int x, int y) {
+    public boolean containsPointAt(int x, int y) {
         for (Point point: points) {
             if(point.x == x && point.y == y) {
                 return true;
@@ -219,7 +276,7 @@ public abstract class Tetromino {
      */
     public void clearTetromino(int[][] map) {
         for(Point point : points) {
-            if(point.y < 0) { continue; }
+            if(point.y < 0 || point.y > 20 || point.x < 0 || point.x > 9) { continue; }
             map[point.y][point.x] = backgroundNr;
         }
     }
