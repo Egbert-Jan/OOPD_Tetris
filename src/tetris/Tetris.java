@@ -28,7 +28,7 @@ public class Tetris extends GameEngine {
     private int worldWidth = TILE_SIZE * 10;
     private int worldHeight = TILE_SIZE * 21;
 
-    private int tilesMap[][] = createMap();
+    private int[][] tilesMap = createMap();
     private int[][] tempMap = createMap();
     private TileType[] tileTypes = createTiles();
     private Tetromino currentTetromino = Tetromino.generateRandomTetromino();
@@ -130,7 +130,7 @@ public class Tetris extends GameEngine {
             return handleGoDown();
         } else if(keyCode == UP) {
             return currentTetromino.nextRotation(tilesMap, currentTetromino);
-        } else if(keyCode == ALT) {
+        } else if(keyCode == ALT || keyCode == SHIFT) {
             while(handleGoDown());
             return true;
         }

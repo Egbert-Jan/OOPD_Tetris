@@ -57,8 +57,13 @@ public abstract class Tetromino {
      */
     public boolean goLeft(int[][] map) {
         for(Point point: getSidePoints(false)) {
-            if(point.x == 0 || (map[point.y][point.x-1] != backgroundNr && map[point.y][point.x-1] != indicationNr)) {
+            if(point.x == 0)
                 return false;
+
+            if(point.x > 0) {
+                int leftType = map[point.y][point.x - 1];
+                if (leftType != backgroundNr && leftType != indicationNr && leftType != 9)
+                    return false;
             }
         }
 
@@ -78,8 +83,14 @@ public abstract class Tetromino {
      */
     public boolean goRight(int[][] map) {
         for(Point point: getSidePoints(true)) {
-            if(point.x == 9 || (map[point.y][point.x+1] != backgroundNr && map[point.y][point.x+1] != indicationNr)) {
+            if(point.x == 9) {
                 return false;
+            }
+
+            if(point.x < 9) {
+                int leftType = map[point.y][point.x + 1];
+                if(leftType != backgroundNr && leftType != indicationNr && leftType != 9)
+                    return false;
             }
         }
 
