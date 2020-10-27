@@ -7,7 +7,6 @@ import nl.han.ica.oopg.persistence.FilePersistence;
 import nl.han.ica.oopg.persistence.IPersistence;
 import nl.han.ica.oopg.sound.Sound;
 import nl.han.ica.oopg.tile.Tile;
-import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
 import nl.han.ica.oopg.view.View;
 import tetris.tetrominos.*;
@@ -22,8 +21,7 @@ public class Tetris extends GameEngine {
     private int worldWidth = TILE_SIZE * 10;
     private int worldHeight = TILE_SIZE * 21;
 
-    private int[][] tilesMap = createMap();
-    private int[][] tempMap = createMap();
+    private TetrisMap tetrisMap = new TetrisMap();
     private TileType[] tileTypes = createTiles();
     private Tetromino currentTetromino = Tetromino.generateRandomTetromino();
     private DecendTimer decendTimer;
@@ -84,9 +82,7 @@ public class Tetris extends GameEngine {
         if(e.getKeyCode() == ESC) {
             if(gameStatus == GameStatus.Playing) {
                 gameStatus = GameStatus.Paused;
-
-                tempMap = copyMap(tilesMap);
-                tilesMap = createMap();
+                tetrisMap.hideMap();
                 drawMap();
 
                 showInfoScreen(false, true);
@@ -94,7 +90,7 @@ public class Tetris extends GameEngine {
                 restartGame();
             } else {
                 gameStatus = GameStatus.Playing;
-                tilesMap = tempMap;
+                tetrisMap.showMap();
                 deleteInfoObjects();
             }
         }
@@ -117,13 +113,13 @@ public class Tetris extends GameEngine {
      */
     private boolean handleKeypress(int keyCode) {
         if(keyCode == LEFT) {
-            return currentTetromino.goLeft(tilesMap);
+            return currentTetromino.goLeft(tetrisMap.map());
         } else if(keyCode == RIGHT) {
-            return currentTetromino.goRight(tilesMap);
+            return currentTetromino.goRight(tetrisMap.map());
         } else if(keyCode == DOWN) {
             return handleGoDown();
         } else if(keyCode == UP) {
-            return currentTetromino.nextRotation(tilesMap, currentTetromino);
+            return currentTetromino.nextRotation(tetrisMap.map(), currentTetromino);
         } else if(keyCode == ALT || keyCode == SHIFT) {
             while(handleGoDown());
             return true;
@@ -138,13 +134,13 @@ public class Tetris extends GameEngine {
      * @return boolean if the Tetromino went down
      */
     boolean handleGoDown() {
-        if(!currentTetromino.goDown(tilesMap)) {
+        if(!currentTetromino.goDown(tetrisMap.map())) {
             drawMap();
             int amountOfRows = 0;
 
-            for (int y = 1; y < tilesMap.length; y++) {
-                if (isFullRow(tilesMap[y])) {
-                    moveRowsDown(y);
+            for (int y = 1; y < tetrisMap.map().length; y++) {
+                if (tetrisMap.isFullRow(y)) {
+                    tetrisMap.moveRowsDown(y);
                     amountOfRows++;
 
                     levelUpSound.rewind();
@@ -166,9 +162,9 @@ public class Tetris extends GameEngine {
 
             currentTetromino = Tetromino.generateRandomTetromino();
 
-            if(!currentTetromino.canGoDown(tilesMap)) {
+            if(!currentTetromino.canGoDown(tetrisMap.map())) {
                 System.out.println(totalPoints);
-                currentTetromino.clearTetromino(tilesMap);
+                currentTetromino.clearTetromino(tetrisMap.map());
 
                 showInfoScreen(totalPoints > highScore, false);
                 trySavingHighScore();
@@ -180,6 +176,10 @@ public class Tetris extends GameEngine {
         return true;
     }
 
+    void drawMap() {
+        this.tileMap = tetrisMap.generateMap(currentTetromino, tileTypes, TILE_SIZE);
+    }
+
     private boolean trySavingHighScore() {
         if(totalPoints > highScore) {
             persistence.saveData(Integer.toString(totalPoints));
@@ -189,74 +189,6 @@ public class Tetris extends GameEngine {
         return false;
     }
 
-
-    /**
-     * Recursive function that moves all the rows above the initial row down
-     * @param row the row to start from
-     */
-    private void moveRowsDown(int row) {
-        if(row == 1) {
-            int[] newRow = new int[10];
-
-            for(int i = 0; i < 10; i++) {
-                newRow[i] = Tetromino.backgroundNr;
-            }
-
-            tilesMap[1] = newRow;
-            return;
-        }
-
-        tilesMap[row] = tilesMap[row-1];
-
-        moveRowsDown(row-1);
-    }
-
-    /**
-     * Check if this row is full with Tetrominos
-     * @param row
-     * @return a boolean if the row is full with Tetrominos
-     */
-    private boolean isFullRow(int[] row) {
-        for(int i = 0; i < row.length; i++) {
-            if(row[i] == Tetromino.backgroundNr || row[i] == Tetromino.indicationNr)
-                return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Draws all the Tetromino's on the screen
-     */
-    void drawMap() {
-        Point[] points = currentTetromino.getLowestPoints();
-        for(int y = 0; y < tilesMap.length; y++) {
-            for(int x = 0; x < tilesMap[y].length; x++) {
-
-                if(y == 0) {
-                    tilesMap[y][x] = 9;
-                }
-
-                if(tilesMap[y][x] == Tetromino.backgroundNr) {
-                    for (Point p : points) {
-                        if(x == p.x && y > p.y)
-                            tilesMap[y][x] = Tetromino.indicationNr;
-                    }
-                }
-
-                if(tilesMap[y][x] == Tetromino.indicationNr) {
-                    if(!Point.containsX(points, x))
-                        tilesMap[y][x] = Tetromino.backgroundNr;
-                }
-
-                if(currentTetromino.containsPointAt(x, y)) {
-                    tilesMap[y][x] = currentTetromino.type;
-                }
-            }
-        }
-
-        super.tileMap = new TileMap(TILE_SIZE, tileTypes, tilesMap);
-    }
 
     /**
      * Creates TileTypes with different colors to show on the screen
@@ -288,44 +220,6 @@ public class Tetris extends GameEngine {
                 new TileType<>(Tile.class, indicationTile),
                 new TileType<>(Tile.class, darkTopTile),
         };
-    }
-
-    /**
-     * Creates map of 20 by 10
-     * @return a two dimensional array of 20 by 10
-     */
-    private int[][] createMap() {
-        int[][] map = new int[21][10];
-
-        for(int y = 0; y < 21; y++) {
-            int[] row = new int[10];
-            for(int x = 0; x < 10; x++) {
-                row[x] = Tetromino.backgroundNr;
-            }
-            map[y] = row;
-        }
-
-        System.out.println(map.length);
-        return map;
-    }
-
-    /**
-     * Copies the two dimensional by value
-     * @param map
-     * @return the same map as input but by value
-     */
-    public static int[][] copyMap(int[][] map) {
-        int[][] copyMap = new int[21][10];
-
-        for(int y = 0; y < 21; y++) {
-            int[] row = new int[10];
-            for (int x = 0; x < 10; x++) {
-                row[x] = map[y][x];
-            }
-            copyMap[y] = row;
-        }
-
-        return copyMap;
     }
 
     private void showInfoScreen(boolean newHighScore, boolean beginScreen) {
@@ -386,7 +280,7 @@ public class Tetris extends GameEngine {
 
         totalPoints = 0;
         currentTetromino = Tetromino.generateRandomTetromino();
-        tilesMap = createMap();
+        tetrisMap.setNewEmptyMap();
 
         currentScoreTextObject.setText("Score: 0");
 
