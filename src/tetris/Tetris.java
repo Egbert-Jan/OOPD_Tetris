@@ -224,7 +224,7 @@ public class Tetris extends GameEngine {
      */
     private boolean isFullRow(int[] row) {
         for(int i = 0; i < row.length; i++) {
-            if(row[i] == Tetromino.backgroundNr)
+            if(row[i] == Tetromino.backgroundNr || row[i] == Tetromino.indicationNr)
                 return false;
         }
 
@@ -391,6 +391,8 @@ public class Tetris extends GameEngine {
         totalPoints = 0;
         currentTetromino = Tetromino.generateRandomTetromino();
         tilesMap = createMap();
+
+        currentScoreTextObject.setText("Score: 0");
 
         gameStatus = GameStatus.Playing;
     }
