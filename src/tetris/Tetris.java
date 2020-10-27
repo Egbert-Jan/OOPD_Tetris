@@ -29,6 +29,7 @@ public class Tetris extends GameEngine {
     private int worldHeight = TILE_SIZE * 21;
 
     private int tilesMap[][] = createMap();
+    private int[][] tempMap = createMap();
     private TileType[] tileTypes = createTiles();
     private Tetromino currentTetromino = Tetromino.generateRandomTetromino();
     private DecendTimer decendTimer;
@@ -80,8 +81,6 @@ public class Tetris extends GameEngine {
     @Override
     public void update() { }
 
-    boolean showEndScreen = false;
-
     @Override
     public void keyPressed(KeyEvent e) {
 
@@ -91,11 +90,17 @@ public class Tetris extends GameEngine {
         if(e.getKeyCode() == ESC) {
             if(gameStatus == GameStatus.Playing) {
                 gameStatus = GameStatus.Paused;
+
+                tempMap = copyMap(tilesMap);
+                tilesMap = createMap();
+                drawMap();
+
                 showInfoScreen(false, true);
             } else if(gameStatus == GameStatus.Ended) {
                 restartGame();
             } else {
                 gameStatus = GameStatus.Playing;
+                tilesMap = tempMap;
                 deleteInfoObjects();
             }
         }
