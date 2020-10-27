@@ -1,7 +1,5 @@
 package tetris.tetrominos;
 
-import tetris.Tetris;
-
 import java.util.HashMap;
 import java.util.Random;
 
@@ -19,6 +17,7 @@ public abstract class Tetromino {
 
     public static final int backgroundNr = 0;
     public static final int indicationNr = 8;
+    static final Point[] NO_ROTATIONS = {};
 
     Point[] points = new Point[4];
 
@@ -60,7 +59,7 @@ public abstract class Tetromino {
             if(point.x == 0)
                 return false;
 
-            if(point.x > 0) {
+            if(point.x > 0 && point.x < 10 && point.y < 21) {
                 int leftType = map[point.y][point.x - 1];
                 if (leftType != backgroundNr && leftType != indicationNr && leftType != 9)
                     return false;
@@ -87,7 +86,7 @@ public abstract class Tetromino {
                 return false;
             }
 
-            if(point.x < 9) {
+            if(point.x < 9 && point.y < 21) {
                 int leftType = map[point.y][point.x + 1];
                 if(leftType != backgroundNr && leftType != indicationNr && leftType != 9)
                     return false;
@@ -110,38 +109,61 @@ public abstract class Tetromino {
      * @return boolean if the tetromino has been rotated
      */
     public final boolean nextRotation(int[][] map, Tetromino currentTetromino) {
-        int[][] tempMap = Tetris.copyMap(map);
-
         clearTetromino(map);
 
         rotationNumber++;
         rotationNumber = rotationNumber > 3 ? 0 : rotationNumber;
 
-        rotate(map, rotationNumber);
+        //Receive new position for rotation
+        Point[] newPoints = rotate(rotationNumber);
 
-        if(!currentTetromino.canGoDown(map)) {
-            rotationNumber--;
-            rotationNumber = rotationNumber < 0 ? 3 : rotationNumber;
+        if(newPoints == NO_ROTATIONS) { return false; }
 
-            //Rotate back
-            rotate(map, rotationNumber);
+        for(Point p : newPoints) {
+            //Can not turn when point is bellow bottom of screen
+            if(p.y > 20)
+                return false;
 
-            for(int row = 0; row < map.length; row++) {
-                map[0] = tempMap[0];
+            if(p.x >= 0 && p.x < 10) {
+                //Can only turn if the new points are on a background, indicator or it's own tile
+                if (map[p.y][p.x] != backgroundNr && map[p.y][p.x] != indicationNr) {
+                    return false;
+                }
             }
-
-            return false;
         }
 
-        return true;
+        //Assign new points
+        points = newPoints;
+
+        if(canGoDown(map)) {
+            //Tile can go down. It's a normal rotation and didn't hit anything
+            return true;
+        }
+
+        if (goRight(map)) {
+            if (canGoDown(map)) {
+                return true;
+            } else {
+                goLeft(map);
+            }
+        }
+
+        if(goLeft(map)) {
+            if (canGoDown(map)) {
+                return true;
+            } else {
+                goRight(map);
+            }
+        }
+
+        return false;
     }
 
     /**
      * A abstract method to rotate the shape
-     * @param map
      * @param rotationNumber 0 = UP, 1 = Right, 2 = Down, 3 = Left
      */
-    protected abstract void rotate(int[][] map, int rotationNumber);
+    protected abstract Point[] rotate(int rotationNumber);
 
 
     /**
@@ -202,7 +224,7 @@ public abstract class Tetromino {
             if(point.x >= 10 || point.x <= -1)
                 return false;
 
-            if(point.y >= 20 || (map[point.y+1][point.x] != backgroundNr && map[point.y+1][point.x] != indicationNr))
+            if(point.y > 19 || (map[point.y+1][point.x] != backgroundNr && map[point.y+1][point.x] != indicationNr))
                 return false;
         }
 
@@ -230,7 +252,7 @@ public abstract class Tetromino {
      */
     public void clearTetromino(int[][] map) {
         for(Point point : points) {
-            if(point.y < 0) { continue; }
+            if(point.y < 0 || point.y > 20 || point.x < 0 || point.x > 9) { continue; }
             map[point.y][point.x] = backgroundNr;
         }
     }

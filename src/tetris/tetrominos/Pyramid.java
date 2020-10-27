@@ -17,12 +17,14 @@ public class Pyramid extends Tetromino {
     }
 
     @Override
-    public void rotate(int[][] map, int rotationNumber) {
+    public Point[] rotate(int rotationNumber) {
         //Turn point
-        Point tP = points[1];
+        Point turnPoint = points[1];
+        int x = turnPoint.x;
+        int y = turnPoint.y;
 
-        int x = tP.x;
-        int y = tP.y;
+        Point[] points = new Point[4];
+        points[1] = turnPoint;
 
         if(rotationNumber == 0) {
             points[0] = new Point(x-1, y);
@@ -41,5 +43,7 @@ public class Pyramid extends Tetromino {
             points[2] = new Point(x-1, y);
             points[3] = new Point(x, y+1);
         }
+
+        return points;
     }
 }

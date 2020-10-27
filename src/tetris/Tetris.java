@@ -14,12 +14,6 @@ import tetris.tetrominos.*;
 
 import java.awt.event.KeyEvent;
 
-enum GameStatus {
-    Playing,
-    Paused,
-    Ended
-}
-
 public class Tetris extends GameEngine {
     private static String MEDIA_URL = "src/tetris/media/";
 
@@ -310,6 +304,8 @@ public class Tetris extends GameEngine {
             }
             map[y] = row;
         }
+
+        System.out.println(map.length);
         return map;
     }
 

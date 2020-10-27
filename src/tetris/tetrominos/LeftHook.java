@@ -16,16 +16,19 @@ public class LeftHook extends Tetromino {
     }
 
     @Override
-    public void rotate(int[][] map, int rotationNumber) {
+    public Point[] rotate(int rotationNumber) {
         //Turn point
         Point tP = points[1];
 
         int x = tP.x;
         int y = tP.y;
 
+        Point[] points = new Point[4];
+        points[1] = tP;
+
         if(rotationNumber == 0) {
             points[0] = new Point(x-1, y);
-            points[2] = new Point(x-1, y    -1);
+            points[2] = new Point(x-1, y-1);
             points[3] = new Point(x+1, y);
         } else if (rotationNumber == 1){
             points[0] = new Point(x, y-1);
@@ -40,5 +43,7 @@ public class LeftHook extends Tetromino {
             points[2] = new Point(x, y+1);
             points[3] = new Point(x-1, y+1);
         }
+
+        return points;
     }
 }

@@ -13,5 +13,5 @@ public class Square extends Tetromino {
     }
 
     @Override
-    public void rotate(int[][] map, int rotationNumber) { }
+    public Point[] rotate(int rotationNumber) { return NO_ROTATIONS; }
 }
