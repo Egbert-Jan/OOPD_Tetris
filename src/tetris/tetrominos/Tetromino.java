@@ -17,6 +17,7 @@ public abstract class Tetromino {
 
     public static final int backgroundNr = 0;
     public static final int indicationNr = 8;
+    public static final int topRowNr = 9;
     static final Point[] NO_ROTATIONS = {};
 
     Point[] points = new Point[4];
@@ -61,7 +62,7 @@ public abstract class Tetromino {
 
             if(point.x > 0 && point.x < 10 && point.y < 21) {
                 int leftType = map[point.y][point.x - 1];
-                if (leftType != backgroundNr && leftType != indicationNr && leftType != 9)
+                if (leftType != backgroundNr && leftType != indicationNr && leftType != topRowNr)
                     return false;
             }
         }
@@ -88,7 +89,7 @@ public abstract class Tetromino {
 
             if(point.x < 9 && point.y < 21) {
                 int leftType = map[point.y][point.x + 1];
-                if(leftType != backgroundNr && leftType != indicationNr && leftType != 9)
+                if(leftType != backgroundNr && leftType != indicationNr && leftType != topRowNr)
                     return false;
             }
         }
@@ -126,7 +127,7 @@ public abstract class Tetromino {
 
             if(p.x >= 0 && p.x < 10) {
                 //Can only turn if the new points are on a background, indicator or it's own tile
-                if (map[p.y][p.x] != backgroundNr && map[p.y][p.x] != indicationNr) {
+                if (map[p.y][p.x] != backgroundNr && map[p.y][p.x] != indicationNr && map[p.y][p.x] != topRowNr) {
                     return false;
                 }
             }

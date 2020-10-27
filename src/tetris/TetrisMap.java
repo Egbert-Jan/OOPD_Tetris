@@ -41,7 +41,7 @@ public class TetrisMap {
             for(int x = 0; x < tilesMap[y].length; x++) {
 
                 if(y == 0) {
-                    tilesMap[y][x] = 9;
+                    tilesMap[y][x] = Tetromino.topRowNr;
                 }
 
                 if(tilesMap[y][x] == Tetromino.backgroundNr) {
