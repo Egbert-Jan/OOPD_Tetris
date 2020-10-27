@@ -152,6 +152,9 @@ public abstract class Tetromino {
             if (canGoDown(map)) {
                 return true;
             } else {
+                if(this instanceof Straight) {
+                    goLeft(map);
+                }
                 goRight(map);
             }
         }

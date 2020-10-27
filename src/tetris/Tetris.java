@@ -197,7 +197,7 @@ public class Tetris extends GameEngine {
     private TileType[] createTiles() {
         Sprite darkTopTile = new Sprite(Tetris.MEDIA_URL.concat("darkGrayTile3.png"));
         Sprite backgroundTile = new Sprite(Tetris.MEDIA_URL.concat("backgroundTile.png"));
-        Sprite indicationTile = new Sprite(Tetris.MEDIA_URL.concat("lightGrayTile3.png"));
+        Sprite indicationTile = new Sprite(Tetris.MEDIA_URL.concat("lightGrayTile.png"));
 
         Sprite lightBlueSprite = new Sprite(Tetris.MEDIA_URL.concat("lightBlueTile.png"));
         Sprite blueSprite = new Sprite(Tetris.MEDIA_URL.concat("blueTile.png"));
