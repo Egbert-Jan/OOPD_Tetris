@@ -9,11 +9,16 @@ import nl.han.ica.oopg.sound.Sound;
 import nl.han.ica.oopg.tile.Tile;
 import nl.han.ica.oopg.tile.TileMap;
 import nl.han.ica.oopg.tile.TileType;
-import nl.han.ica.oopg.userinput.IKeyInput;
 import nl.han.ica.oopg.view.View;
 import tetris.tetrominos.*;
 
 import java.awt.event.KeyEvent;
+
+enum GameStatus {
+    Playing,
+    Paused,
+    Ended
+}
 
 public class Tetris extends GameEngine {
     private static String MEDIA_URL = "src/tetris/media/";
@@ -29,7 +34,7 @@ public class Tetris extends GameEngine {
     private DecendTimer decendTimer;
 
     private int totalPoints = 0;
-    boolean gameIsStopped = false;
+    GameStatus gameStatus = GameStatus.Paused;
 
     private IPersistence persistence;
     private int highScore;
@@ -50,6 +55,8 @@ public class Tetris extends GameEngine {
 
     @Override
     public void setupGame() {
+        gameStatus = GameStatus.Paused;
+
         View view = new View(worldWidth, worldHeight);
         setView(view);
 
@@ -66,10 +73,14 @@ public class Tetris extends GameEngine {
         addGameObject(currentScoreTextObject);
 
         frameRate(30);
+
+        showInfoScreen(true, true);
     }
 
     @Override
     public void update() { }
+
+    boolean showEndScreen = false;
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -77,7 +88,19 @@ public class Tetris extends GameEngine {
         if(e.getKeyCode() == RETURN || e.getKeyCode() == ENTER)
             restartGame();
 
-        if(gameIsStopped)
+        if(e.getKeyCode() == ESC) {
+            if(gameStatus == GameStatus.Playing) {
+                gameStatus = GameStatus.Paused;
+                showInfoScreen(false, true);
+            } else if(gameStatus == GameStatus.Ended) {
+                restartGame();
+            } else {
+                gameStatus = GameStatus.Playing;
+                deleteInfoObjects();
+            }
+        }
+
+        if(gameStatus != GameStatus.Playing)
             return;
 
         if(handleKeypress(e.getKeyCode())) {
@@ -120,7 +143,7 @@ public class Tetris extends GameEngine {
             drawMap();
             int amountOfRows = 0;
 
-            for (int y = 0; y < tilesMap.length; y++) {
+            for (int y = 1; y < tilesMap.length; y++) {
                 if (isFullRow(tilesMap[y])) {
                     moveRowsDown(y);
                     amountOfRows++;
@@ -148,7 +171,7 @@ public class Tetris extends GameEngine {
                 System.out.println(totalPoints);
                 currentTetromino.clearTetromino(tilesMap);
 
-                showEndGameView(totalPoints > highScore);
+                showInfoScreen(totalPoints > highScore, false);
                 trySavingHighScore();
             }
 
@@ -173,14 +196,14 @@ public class Tetris extends GameEngine {
      * @param row the row to start from
      */
     private void moveRowsDown(int row) {
-        if(row == 0) {
+        if(row == 1) {
             int[] newRow = new int[10];
 
             for(int i = 0; i < 10; i++) {
                 newRow[i] = Tetromino.backgroundNr;
             }
 
-            tilesMap[0] = newRow;
+            tilesMap[1] = newRow;
             return;
         }
 
@@ -313,10 +336,10 @@ public class Tetris extends GameEngine {
         return copyMap;
     }
 
-    private void showEndGameView(boolean newHighScore) {
-        gameIsStopped = true;
+    private void showInfoScreen(boolean newHighScore, boolean beginScreen) {
+        gameStatus = beginScreen ? GameStatus.Paused : GameStatus.Ended;
 
-        deleteGameOverObjects();
+        deleteInfoObjects();
 
         int width = worldWidth;
         int height = worldHeight;
@@ -324,27 +347,32 @@ public class Tetris extends GameEngine {
 //        Dashboard dashboard = new Dashboard(width/4, (height/2) - (width/2), width/2, width/2);
 //        dashboard.setBackground(100, 100, 100);
 
-        highScoreText.setText("HighScore: " + highScore);
+        highScoreText.setText(!beginScreen ? "HighScore: " + highScore : "Arrow keys: Move And Rotate");
+        highScoreText.setFontSize(!beginScreen ? 25 : 18);
         highScoreText.setForeColor(255, 255, 255, 255);
-        highScoreText.setX(width/4);
+        highScoreText.setX(!beginScreen ? width / 4 : 20);
         highScoreText.setY(height/2 - 150);
         addGameObject(highScoreText);
 
-        currentScoreText.setText("Score: " + totalPoints);
+        currentScoreText.setText(!beginScreen ? "Score: " + totalPoints : "Alt: Hard Drop");
+        currentScoreText.setFontSize(!beginScreen ? 25 : 18);
         currentScoreText.setForeColor(255, 255, 255, 255);
-        currentScoreText.setX(width/4);
+        currentScoreText.setX(!beginScreen ? width / 4 : 20);
         currentScoreText.setY(height/2 - 120);
         addGameObject(currentScoreText);
 
-        if(newHighScore) {
+        if(newHighScore || beginScreen) {
+            newHighScoreText.setText(!beginScreen ? "New HighScore!" : "Esc: Pause | Enter: Restart Game");
+            newHighScoreText.setFontSize(!beginScreen ? 25 : 18);
             newHighScoreText.setForeColor(255, 255, 255, 255);
-            newHighScoreText.setX(width / 4);
+            newHighScoreText.setX(!beginScreen ? width / 4 : 20);
             newHighScoreText.setY(height/2 - 80);
             addGameObject(newHighScoreText);
         }
 
+        continueText.setText(!beginScreen ? "Press Enter/ESC to restart" : "Press ESC to start");
         continueText.setForeColor(255, 255, 255, 255);
-        continueText.setX(width / 4);
+        continueText.setX(!beginScreen ? width / 4 : 20);
         continueText.setY(height/2 - 40);
         addGameObject(continueText);
 
@@ -352,7 +380,7 @@ public class Tetris extends GameEngine {
 //        deleteDashboard(dashboard);
     }
 
-    private void deleteGameOverObjects() {
+    private void deleteInfoObjects() {
         deleteGameObject(highScoreText);
         deleteGameObject(currentScoreText);
         deleteGameObject(newHighScoreText);
@@ -360,7 +388,7 @@ public class Tetris extends GameEngine {
     }
 
     private void restartGame() {
-        deleteGameOverObjects();
+        deleteInfoObjects();
 
         trySavingHighScore();
 
@@ -368,6 +396,6 @@ public class Tetris extends GameEngine {
         currentTetromino = Tetromino.generateRandomTetromino();
         tilesMap = createMap();
 
-        gameIsStopped = false;
+        gameStatus = GameStatus.Playing;
     }
 }

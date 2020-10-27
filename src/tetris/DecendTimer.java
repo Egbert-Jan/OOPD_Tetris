@@ -22,7 +22,7 @@ public class DecendTimer implements IAlarmListener {
 
     @Override
     public void triggerAlarm(String alarmName) {
-        if(!world.gameIsStopped)
+        if(world.gameStatus == GameStatus.Playing)
             world.handleGoDown();
             world.drawMap();
             startAlarm();
