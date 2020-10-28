@@ -104,19 +104,18 @@ public abstract class Tetromino {
     }
 
     /**
-     * Try to rotate the Tetromino
-     * @param map
-     * @param currentTetromino
+     * Get the points for the new rotation
+     * @param map the map where the current selected tetromino lives in
      * @return boolean if the tetromino has been rotated
      */
-    public final boolean nextRotation(int[][] map, Tetromino currentTetromino) {
+    public final boolean nextRotation(int[][] map) {
         clearTetromino(map);
 
         rotationNumber++;
         rotationNumber = rotationNumber > 3 ? 0 : rotationNumber;
 
         //Receive new position for rotation
-        Point[] newPoints = rotate(rotationNumber);
+        Point[] newPoints = pointsForRotation(rotationNumber);
 
         if(newPoints == NO_ROTATIONS) { return false; }
 
@@ -141,6 +140,7 @@ public abstract class Tetromino {
             return true;
         }
 
+        //Try moving tetromino to the right and if can go down return else revert going to the right
         if (goRight(map)) {
             if (canGoDown(map)) {
                 return true;
@@ -149,10 +149,12 @@ public abstract class Tetromino {
             }
         }
 
+        //Try moving tetromino to the left and if can go down return else revert going to the left
         if(goLeft(map)) {
             if (canGoDown(map)) {
                 return true;
             } else {
+                //Straight has as only tetromino 4 blocks of with so it needs to go left twice
                 if(this instanceof Straight) {
                     goLeft(map);
                 }
@@ -164,10 +166,11 @@ public abstract class Tetromino {
     }
 
     /**
-     * A abstract method to rotate the shape
+     * A abstract method to get points for the rotation
      * @param rotationNumber 0 = UP, 1 = Right, 2 = Down, 3 = Left
+     * @return
      */
-    protected abstract Point[] rotate(int rotationNumber);
+    protected abstract Point[] pointsForRotation(int rotationNumber);
 
 
     /**

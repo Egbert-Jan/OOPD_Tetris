@@ -33,7 +33,11 @@ public class TetrisMap {
     }
 
     /**
-     * Draws all the Tetromino's on the screen
+     *
+     * @param currentTetromino the current tetromino displayed on the screen
+     * @param tileTypes the list with tileTypes that are availible
+     * @param tileSize the size of each tile
+     * @return a TileMap
      */
     TileMap generateMap(Tetromino currentTetromino, TileType[] tileTypes, int tileSize) {
         Point[] points = currentTetromino.getLowestPoints();
@@ -88,7 +92,7 @@ public class TetrisMap {
 
     /**
      * Check if this row is full with Tetrominos
-     * @return a boolean if the row is full with Tetrominos
+     * @return a boolean value if the row is full with Tetrominos
      */
     boolean isFullRow(int y) {
         for(int i: tilesMap[y]) {
@@ -100,8 +104,8 @@ public class TetrisMap {
     }
 
     /**
-     * Creates map of 20 by 10
-     * @return a two dimensional array of 20 by 10
+     * Creates map of 21 by 10
+     * @return a two dimensional array of 21 by 10
      */
     private int[][] createMap() {
         int[][] map = new int[21][10];
@@ -120,7 +124,7 @@ public class TetrisMap {
 
     /**
      * Copies the two dimensional by value
-     * @param map
+     * @param map the two dimensional map as int array
      * @return the same map as input but by value
      */
     private int[][] copyMap(int[][] map) {

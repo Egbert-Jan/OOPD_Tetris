@@ -17,7 +17,7 @@ public class Pyramid extends Tetromino {
     }
 
     @Override
-    public Point[] rotate(int rotationNumber) {
+    public Point[] pointsForRotation(int rotationNumber) {
         //Turn point
         Point turnPoint = points[1];
         int x = turnPoint.x;

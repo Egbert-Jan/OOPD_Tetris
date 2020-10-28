@@ -6,7 +6,6 @@ package tetris.tetrominos;
  */
 public class Point {
     public int x, y = 0;
-    public int id = 0;
 
     Point(int x, int y) {
         this.x = x;

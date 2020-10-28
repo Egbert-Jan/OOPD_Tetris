@@ -17,7 +17,7 @@ public class LeftSkew extends Tetromino {
     }
 
     @Override
-    public Point[] rotate(int rotationNumber) {
+    public Point[] pointsForRotation(int rotationNumber) {
         //Turn point
         Point tP = points[1];
         int x = tP.x;

@@ -119,7 +119,7 @@ public class Tetris extends GameEngine {
         } else if(keyCode == DOWN) {
             return handleGoDown();
         } else if(keyCode == UP) {
-            return currentTetromino.nextRotation(tetrisMap.map(), currentTetromino);
+            return currentTetromino.nextRotation(tetrisMap.map());
         } else if(keyCode == ALT || keyCode == SHIFT) {
             while(handleGoDown());
             return true;
@@ -176,10 +176,17 @@ public class Tetris extends GameEngine {
         return true;
     }
 
+    /**
+     * Draws the map on the screen
+     */
     void drawMap() {
         this.tileMap = tetrisMap.generateMap(currentTetromino, tileTypes, TILE_SIZE);
     }
 
+    /**
+     * Saves the high score if the current score is bigger than the high score
+     * @return a boolean if it updated the high score
+     */
     private boolean trySavingHighScore() {
         if(totalPoints > highScore) {
             persistence.saveData(Integer.toString(totalPoints));
@@ -222,6 +229,11 @@ public class Tetris extends GameEngine {
         };
     }
 
+    /**
+     * Shows information on the screen. Depending on the parameters if will show different text and styles.
+     * @param newHighScore a boolean value indicating if it should show that the user reached a new highscore
+     * @param beginScreen a boolean value indicating if it should show the begin screen information.
+     */
     private void showInfoScreen(boolean newHighScore, boolean beginScreen) {
         gameStatus = beginScreen ? GameStatus.Paused : GameStatus.Ended;
 
@@ -266,6 +278,9 @@ public class Tetris extends GameEngine {
 //        deleteDashboard(dashboard);
     }
 
+    /**
+     * Delete all information screen objects
+     */
     private void deleteInfoObjects() {
         deleteGameObject(highScoreText);
         deleteGameObject(currentScoreText);
@@ -273,6 +288,9 @@ public class Tetris extends GameEngine {
         deleteGameObject(continueText);
     }
 
+    /**
+     * Restarts a freshly new game.
+     */
     private void restartGame() {
         deleteInfoObjects();
 

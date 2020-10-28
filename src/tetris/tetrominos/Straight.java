@@ -20,7 +20,7 @@ public class Straight extends Tetromino {
     }
 
     @Override
-    public Point[] rotate(int rotationNumber) {
+    public Point[] pointsForRotation(int rotationNumber) {
         Point tP = points[1];
 
         Point[] points = new Point[4];
