@@ -34,10 +34,10 @@ public class TetrisMap {
 
     /**
      *
-     * @param currentTetromino the current tetromino displayed on the screen
-     * @param tileTypes the list with tileTypes that are availible
-     * @param tileSize the size of each tile
-     * @return a TileMap
+     * @param currentTetromino The current tetromino displayed on the screen
+     * @param tileTypes The list with tileTypes that are availible
+     * @param tileSize The size of each tile
+     * @return A TileMap
      */
     TileMap generateMap(Tetromino currentTetromino, TileType[] tileTypes, int tileSize) {
         Point[] points = currentTetromino.getLowestPoints();
@@ -71,7 +71,7 @@ public class TetrisMap {
 
     /**
      * Recursive function that moves all the rows above the initial row down
-     * @param row the row to start from
+     * @param row The row to start from
      */
      void moveRowsDown(int row) {
         if(row == 1) {
@@ -92,7 +92,7 @@ public class TetrisMap {
 
     /**
      * Check if this row is full with Tetrominos
-     * @return a boolean value if the row is full with Tetrominos
+     * @return A boolean value if the row is full with Tetrominos
      */
     boolean isFullRow(int y) {
         for(int i: tilesMap[y]) {
@@ -105,7 +105,7 @@ public class TetrisMap {
 
     /**
      * Creates map of 21 by 10
-     * @return a two dimensional array of 21 by 10
+     * @return A two dimensional array of 21 by 10
      */
     private int[][] createMap() {
         int[][] map = new int[21][10];
@@ -124,8 +124,8 @@ public class TetrisMap {
 
     /**
      * Copies the two dimensional by value
-     * @param map the two dimensional map as int array
-     * @return the same map as input but by value
+     * @param map The two dimensional map as int array
+     * @return The same map as input but by value
      */
     private int[][] copyMap(int[][] map) {
         int[][] copyMap = new int[21][10];

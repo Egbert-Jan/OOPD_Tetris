@@ -15,7 +15,7 @@ public class DecendTimer implements IAlarmListener {
     }
 
     private void startAlarm() {
-        Alarm alarm = new Alarm("Fall Timer", 1);
+        Alarm alarm = new Alarm("Fall Timer", 0.5);
         alarm.addTarget(this);
         alarm.start();
     }

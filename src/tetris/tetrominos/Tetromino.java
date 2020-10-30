@@ -15,13 +15,25 @@ public abstract class Tetromino {
     final int startX = 3;
     final int startY = 1;
 
+    /**
+     * Number of the background tile
+     */
     public static final int backgroundNr = 0;
+    /**
+     * Number of the indication tile
+     */
     public static final int indicationNr = 8;
+    /**
+     * Number of the topRow tile
+     */
     public static final int topRowNr = 9;
     static final Point[] NO_ROTATIONS = {};
 
     Point[] points = new Point[4];
 
+    /**
+     * number of this tile representing a color
+     */
     public int type = 0;
 
     //0 = UP, 1 = Right, 2 = Down, 3 = Left
@@ -31,9 +43,9 @@ public abstract class Tetromino {
 
 
     /**
-     * Move Tetromino down
-     * @param map the two dimensional array where the Tetromino is in
-     * @return boolean value if the Tetromino moved down or not
+     * Move the Tetromino down
+     * @param map The two dimensional array where the tetromino lives in
+     * @return Boolean value if the Tetromino moved down
      */
     public boolean goDown(int[][] map) {
 
@@ -52,8 +64,8 @@ public abstract class Tetromino {
 
     /**
      * Move Tetromino left
-     * @param map
-     * @return boolean value if the Tetromino moved left
+     * @param map The two dimensional array where the tetromino lives in
+     * @return Boolean value if the Tetromino moved left
      */
     public boolean goLeft(int[][] map) {
         for(Point point: getSidePoints(false)) {
@@ -78,8 +90,8 @@ public abstract class Tetromino {
 
     /**
      * Move Tetromino right
-     * @param map
-     * @return boolean value if the Tetromino moved right
+     * @param map The two dimensional array where the tetromino lives in
+     * @return Boolean value if the Tetromino moved right
      */
     public boolean goRight(int[][] map) {
         for(Point point: getSidePoints(true)) {
@@ -105,12 +117,13 @@ public abstract class Tetromino {
 
     /**
      * Get the points for the new rotation
-     * @param map the map where the current selected tetromino lives in
-     * @return boolean if the tetromino has been rotated
+     * @param map The two dimensional array where the tetromino lives in
+     * @return Boolean if the tetromino has been rotated
      */
     public final boolean nextRotation(int[][] map) {
         clearTetromino(map);
 
+        //0 = UP, 1 = Right, 2 = Down, 3 = Left
         rotationNumber++;
         rotationNumber = rotationNumber > 3 ? 0 : rotationNumber;
 
@@ -166,16 +179,16 @@ public abstract class Tetromino {
     }
 
     /**
-     * A abstract method to get points for the rotation
+     * A abstract method to get points for the correct rotation
      * @param rotationNumber 0 = UP, 1 = Right, 2 = Down, 3 = Left
-     * @return
+     * @return A array of Points for the new rotation
      */
     protected abstract Point[] pointsForRotation(int rotationNumber);
 
 
     /**
      * Get the lowest points of the Tetromino
-     * @return an array with the lowest points of the Tetromino
+     * @return An array with the lowest points of the Tetromino
      */
     public Point[] getLowestPoints() {
         HashMap<Integer, Point> hashMap = new HashMap<>();
@@ -193,9 +206,9 @@ public abstract class Tetromino {
     }
 
     /**
-     * Get most left or right points from the Tetromino
-     * @param rightSide a boolean value specifying if it should return the Points from the left or right side
-     * @return an array with the left or right points of the Tetromino
+     * Get most left or most right points from the Tetromino
+     * @param rightSide A boolean value specifying if it should return the Points from the most left or most right side
+     * @return An array with the most left or right points of the Tetromino
      */
     private Point[] getSidePoints(boolean rightSide) {
         HashMap<Integer, Point> hashMap = new HashMap<>();
@@ -221,8 +234,8 @@ public abstract class Tetromino {
 
     /**
      * Check if the Tetromino can move down
-     * @param map the two dimensional array where the Tetromino is in
-     * @return a boolean value if the Tetromino can move down
+     * @param map The two dimensional array where the tetromino lives in
+     * @return A boolean value if the Tetromino can move down
      */
     public boolean canGoDown(int[][] map) {
         Point[] lowestPoints = getLowestPoints();
@@ -240,9 +253,9 @@ public abstract class Tetromino {
 
     /**
      *
-     * @param x position of the place to draw
-     * @param y position of the place to draw
-     * @return a boolean value if a part of the Tetromino has to be drawn on the x,y position
+     * @param x The X position of the point to check for
+     * @param y The Y position of the point to check for
+     * @return A boolean value if there is an point with the same X and Y value in the points array
      */
     public boolean containsPointAt(int x, int y) {
         for (Point point: points) {
@@ -255,7 +268,7 @@ public abstract class Tetromino {
 
     /**
      * Clear this Tetromino from the map
-     * @param map
+     * @param map The two dimensional array where the tetromino lives in
      */
     public void clearTetromino(int[][] map) {
         for(Point point : points) {

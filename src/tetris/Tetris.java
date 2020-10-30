@@ -108,8 +108,8 @@ public class Tetris extends GameEngine {
 
     /**
      *
-     * @param keyCode of the key that has been pressed
-     * @return if the keypress action has been executed
+     * @param keyCode Of the key that has been pressed
+     * @return If the keypress action has been executed
      */
     private boolean handleKeypress(int keyCode) {
         if(keyCode == LEFT) {
@@ -131,7 +131,7 @@ public class Tetris extends GameEngine {
 
     /**
      * Move the Tetromino down and other behaviour that comes with it
-     * @return boolean if the Tetromino went down
+     * @return Boolean if the Tetromino went down
      */
     boolean handleGoDown() {
         if(!currentTetromino.goDown(tetrisMap.map())) {
@@ -185,7 +185,7 @@ public class Tetris extends GameEngine {
 
     /**
      * Saves the high score if the current score is bigger than the high score
-     * @return a boolean if it updated the high score
+     * @return A boolean if it updated the high score
      */
     private boolean trySavingHighScore() {
         if(totalPoints > highScore) {
@@ -199,7 +199,7 @@ public class Tetris extends GameEngine {
 
     /**
      * Creates TileTypes with different colors to show on the screen
-     * @return array with different TileTypes
+     * @return Array with different TileTypes
      */
     private TileType[] createTiles() {
         Sprite darkTopTile = new Sprite(Tetris.MEDIA_URL.concat("darkGrayTile3.png"));
@@ -231,8 +231,8 @@ public class Tetris extends GameEngine {
 
     /**
      * Shows information on the screen. Depending on the parameters if will show different text and styles.
-     * @param newHighScore a boolean value indicating if it should show that the user reached a new highscore
-     * @param beginScreen a boolean value indicating if it should show the begin screen information.
+     * @param newHighScore A boolean value indicating if it should show that the user reached a new highscore
+     * @param beginScreen A boolean value indicating if it should show the begin screen information.
      */
     private void showInfoScreen(boolean newHighScore, boolean beginScreen) {
         gameStatus = beginScreen ? GameStatus.Paused : GameStatus.Ended;
